@@ -36,6 +36,10 @@ void WindowUpdate(Window *window);
 
 void WindowFill(Window *window, uint32_t color);
 
+void WindowDrawPixel(Window *window, uint32_t color, uint32_t x, uint32_t y);
+
+void WindowDrawLine(Window *window, uint32_t color, uint32_t startX, uint32_t startY, uint32_t endX, uint32_t endY);
+
 uint32_t WindowGetWidth(Window *window);
 
 uint32_t WindowGetHeight(Window *window);

@@ -12,10 +12,9 @@ int main(void) {
 		return 1;
 	}
 
-	WindowFill(&window, COLOR_RED);
+	WindowDrawLine(&window, COLOR_RED, 100, 250, 150, 100);
 	while (WindowIsOpen(&window)) {
 		WindowUpdate(&window);
-
 	}
 	WindowDestroy(&window);
 	return 0;
