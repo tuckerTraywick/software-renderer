@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include "MiniFB.h"
+#include "arena.h"
 #include "sprite.h"
 #include "window.h"
 
@@ -22,6 +23,16 @@ static uint32_t bitmap[] = {
 };
 
 int main(void) {
+	Arena arena = ArenaCreate(4*1024);
+	int *a = ArenaAllocate(&arena, sizeof *a);
+	int *c = ArenaAllocate(&arena, sizeof *c);
+	*a = 1;
+	*c = 2;
+	ArenaDeallocate(&arena, sizeof *c);
+	int *d = ArenaAllocate(&arena, sizeof *d);
+	printf("a = %d, d = %d\n", *a, *d);
+	ArenaDestroy(&arena);
+
 	Sprite sprite = {
 		.width = 8,
 		.height = 8,
@@ -34,7 +45,7 @@ int main(void) {
 		return 1;
 	}
 
-	WindowDrawSprite(&window, &sprite, 300, 300, 10);
+	// WindowDrawSprite(&window, &sprite, 300, 300, 10);
 	while (WindowIsOpen(&window)) {
 		WindowUpdate(&window);
 	}
