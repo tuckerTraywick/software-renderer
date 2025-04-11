@@ -3,25 +3,20 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include "MiniFB.h"
+#include "window.h"
 
 int main(void) {
-	struct mfb_window *window = mfb_open_ex("my display", 800, 600, WF_RESIZABLE);
-	if (!window)
-		return 0;
+	Window window = WindowCreate("my window", 800, 600, 1920, 1080);
+	if (!WindowIsOpen(&window)) {
+		fprintf(stderr, "Couldn't create window. Exiting.");
+		return 1;
+	}
 
-	uint32_t *buffer = (uint32_t *) malloc(800 * 600 * 4);
+	WindowFill(&window, COLOR_RED);
+	while (WindowIsOpen(&window)) {
+		WindowUpdate(&window);
 
-	do {
-		int state;
-
-		// TODO: add some fancy rendering to the buffer of size 800 * 600
-
-		state = mfb_update_ex(window, buffer, 800, 600);
-
-		if (state < 0) {
-			window = NULL;
-			break;
-		}
-	} while(mfb_wait_sync(window));
+	}
+	WindowDestroy(&window);
 	return 0;
 }

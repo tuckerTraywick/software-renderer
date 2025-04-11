@@ -1,6 +1,6 @@
 #!/bin/sh
 compiler=gcc
-flags="-Wall -Wextra -Wpedantic -std=gnu99 -lminifb -framework Cocoa"
+flags="-Wall -Wextra -Wpedantic -std=gnu11 -lminifb -framework Cocoa"
 
 run() {
 	echo "$1"
@@ -15,7 +15,7 @@ for arg in "$@"; do
 		;;
 		release)
 		release=true
-		flags+=" -O2 -DDISABLE_DEBUG_ASSERTIONS"
+		flags+=" -O2"
 		;;
 		test)
 		test=true
@@ -34,7 +34,7 @@ mkdir -p build output
 
 for file in source/*.c; do
 	name=$(basename $file .c)
-	run "$compiler $flags $file -Iinclude -c -o build/$name.o"
+	run "$compiler $flags $file -Iinclude -Isource -c -o build/$name.o"
 	echo
 done
 
@@ -47,10 +47,9 @@ fi
 if [ "$test" = true ]; then
 	for file in tests/*.c; do
 		name=$(basename $file .c)
-		run "$compiler $flags $file -Iinclude -Itests -c -o build/$name.o"
+		run "$compiler $flags $file -Iinclude -Isource -Itests -c -o build/$name.o"
 		echo
 	done
 	run "$compiler $flags build/*.o -o output/test"
 	echo
 fi
-
