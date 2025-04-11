@@ -11,14 +11,14 @@
 #define b COLOR_BLACK
 
 static uint32_t bitmap[] = {
-	b, b, b, b, b, b, b, b,
-	b, b, b, b, b, b, b, b,
-	b, b, w, w, w, w, b, b,
-	b, b, w, w, w, w, b, b,
-	b, b, w, w, w, w, b, b,
-	b, b, w, w, w, w, b, b,
-	b, b, b, b, b, b, b, b,
-	b, b, b, b, b, b, b, b,
+	b, w, w, w, w, w, w, b,
+	b, w, b, b, b, b, w, b,
+	b, w, b, b, b, b, w, b,
+	b, w, b, b, b, b, w, b,
+	b, w, b, b, b, b, w, b,
+	b, w, b, b, b, b, w, b,
+	b, w, b, b, b, b, w, b,
+	b, w, w, w, w, w, w, b,
 };
 
 int main(void) {
@@ -34,7 +34,7 @@ int main(void) {
 		return 1;
 	}
 
-	WindowDrawSprite(&window, &sprite, 300, 300);
+	WindowDrawSprite(&window, &sprite, 300, 300, 10);
 	while (WindowIsOpen(&window)) {
 		WindowUpdate(&window);
 	}

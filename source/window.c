@@ -91,10 +91,11 @@ void WindowDrawLine(Window *window, uint32_t color, uint32_t startX, uint32_t st
 	}
 }
 
-void WindowDrawSprite(Window *window, Sprite *sprite, uint32_t x, uint32_t y) {
-	for (uint32_t offsetY = 0; offsetY < sprite->height; ++offsetY) {
-		for (uint32_t offsetX = 0; offsetX < sprite->width; ++offsetX) {
-			WindowDrawPixel(window, sprite->bitmap[offsetY*sprite->height + offsetX], x + offsetX, y + offsetY);
+void WindowDrawSprite(Window *window, Sprite *sprite, uint32_t x, uint32_t y, uint32_t scale) {
+	for (uint32_t offsetY = 0; offsetY < sprite->height*scale; ++offsetY) {
+		for (uint32_t offsetX = 0; offsetX < sprite->width*scale; ++offsetX) {
+			// Use nearest-neighbor scaling to render the bitmap.
+			WindowDrawPixel(window, sprite->bitmap[offsetY/scale*sprite->width + offsetX/scale], x + offsetX, y + offsetY);
 		}
 	}
 }
