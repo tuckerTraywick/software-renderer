@@ -8,8 +8,6 @@
 
 #define abs(x) ((x < 0) ? (-x) : (x))
 
-// #define lerp(start, end, t) ((float)(start) + (float)(t)*((float)(end) - (float)(start)))
-
 Window WindowCreate(const char *name, uint32_t width, uint32_t height, uint32_t maxWidth, uint32_t maxHeight) {
 	Window window = {
 		.miniFBWindow = mfb_open_ex(name, width, height, WF_RESIZABLE),
@@ -21,12 +19,14 @@ Window WindowCreate(const char *name, uint32_t width, uint32_t height, uint32_t 
 	// TODO: Handle these errors.
 	assert(window.miniFBWindow && "Failed to create MiniFB window.");
 	assert(window.frameBuffer && "Failed to allocate framebuffer.");
-	// if (!window.miniFBWindow || !window.frameBuffer) {window.isOpen = false;}
+	// if (!window.miniFBWindow || !window.frameBuffer) {window.isOpen = false;}
 	return window;
 }
 
 void WindowDestroy(Window *window) {
-	mfb_close(window->miniFBWindow);
+	if (mfb_is_window_active(window->miniFBWindow)) {
+		mfb_close(window->miniFBWindow);
+	}
 	free(window->frameBuffer);
 	*window = (Window){0};
 }
@@ -36,6 +36,7 @@ void WindowUpdate(Window *window) {
 	if (state != STATE_OK) {
 		window->isOpen = false;
 	}
+	mfb_wait_sync(window->miniFBWindow);
 }
 
 void WindowFill(Window *window, uint32_t color) {
@@ -50,6 +51,7 @@ void WindowDrawPixel(Window *window, uint32_t color, uint32_t x, uint32_t y) {
 }
 
 void WindowDrawLine(Window *window, uint32_t color, uint32_t startX, uint32_t startY, uint32_t endX, uint32_t endY) {
+	// Make sure the coordinates are ordered least to greatest.
 	if (startX > endX) {
 		uint32_t temp = startX;
 		startX = endX;
@@ -60,11 +62,11 @@ void WindowDrawLine(Window *window, uint32_t color, uint32_t startX, uint32_t st
 		startY = endY;
 		endY = temp;
 	}
-
 	const float deltaX = (float)endX - (float)startX;
 	const float deltaY = (float)endY - (float)startY;
 	float x = (float)startX;
 	float y = (float)startY;
+	// Draw the line using the DDA algorithm.
 	if (deltaX >= deltaY) {
 		while (x < (float)endX) {
 			WindowDrawPixel(window, color, (uint32_t)x, (uint32_t)y);
