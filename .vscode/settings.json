@@ -3,6 +3,7 @@
 		"stdint.h": "c",
 		"window.h": "c",
 		"minifb.h": "c",
-		"minifb_enums.h": "c"
+		"minifb_enums.h": "c",
+		"stdlib.h": "c"
 	}
 }

@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include "MiniFB.h"
+#include "sprite.h"
 
 #define RGB(r, g, b) (MFB_RGB(r, g, b))
 
@@ -20,12 +21,12 @@
 #define COLOR_BLUE (ARGB(255, 0, 0, 255))
 
 typedef struct Window {
-	struct mfb_window *miniFBWindow;
-	uint32_t *frameBuffer;
 	const char *name;
 	uint32_t maxWidth;
 	uint32_t maxHeight;
 	bool isOpen;
+	uint32_t *frameBuffer;
+	struct mfb_window *miniFBWindow;
 } Window;
 
 Window WindowCreate(const char *name, uint32_t width, uint32_t height, uint32_t maxWidth, uint32_t maxHeight);
@@ -39,6 +40,8 @@ void WindowFill(Window *window, uint32_t color);
 void WindowDrawPixel(Window *window, uint32_t color, uint32_t x, uint32_t y);
 
 void WindowDrawLine(Window *window, uint32_t color, uint32_t startX, uint32_t startY, uint32_t endX, uint32_t endY);
+
+void WindowDrawSprite(Window *window, Sprite *sprite, uint32_t x, uint32_t y);
 
 uint32_t WindowGetWidth(Window *window);
 
