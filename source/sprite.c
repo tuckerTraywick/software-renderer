@@ -16,24 +16,7 @@ bool readBmpHeader(FILE *file, BmpHeader *header) {
 	return valuesRead == 1;
 }
 
-void SpriteCopy(Sprite *source, Sprite *destination) {
-	assert(source->width <= destination->width && source->height <= destination->height && "Cannot copy to a smaller sprite.");
-	for (uint32_t i = 0; i < source->width*source->height; ++i) {
-		destination->bitmap[i] = source->bitmap[i];
-	}
-	destination->width = source->width;
-	destination->height = source->height;
-}
-
-void SpriteApplyColor(Sprite *sprite, uint32_t color) {
-	for (uint32_t i = 0; i < sprite->width*sprite->height; ++i) {
-		if (A(sprite->bitmap[i])) {
-			sprite->bitmap[i] = color;
-		}
-	}
-}
-
-bool SpriteReadFromBmp(FILE *file, Sprite *sprite) {
+bool SpriteReadFromBmp(Sprite *sprite, FILE *file) {
 	BmpHeader header = {0};
 	if (!readBmpHeader(file, &header)) {
 		return false;
@@ -56,6 +39,23 @@ bool SpriteReadFromBmp(FILE *file, Sprite *sprite) {
 	sprite->width = header.width;
 	sprite->height = header.height;
 	return valuesRead == header.width*header.height;
+}
+
+void SpriteCopy(Sprite *source, Sprite *destination) {
+	assert(source->width <= destination->width && source->height <= destination->height && "Cannot copy to a smaller sprite.");
+	for (uint32_t i = 0; i < source->width*source->height; ++i) {
+		destination->bitmap[i] = source->bitmap[i];
+	}
+	destination->width = source->width;
+	destination->height = source->height;
+}
+
+void SpriteApplyColor(Sprite *sprite, uint32_t color) {
+	for (uint32_t i = 0; i < sprite->width*sprite->height; ++i) {
+		if (A(sprite->bitmap[i])) {
+			sprite->bitmap[i] = color;
+		}
+	}
 }
 
 Sprite SpriteGetVerticalSlice(Sprite *sprite, uint32_t height, uint32_t index) {

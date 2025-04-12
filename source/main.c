@@ -19,7 +19,7 @@ int main(void) {
 		.height = 24,
 		.bitmap = ArenaAllocate(&heap, font.width*font.height*sizeof *font.bitmap),
 	};
-	if (!SpriteReadFromBmp(file, &font)) {
+	if (!SpriteReadFromBmp(&font, file)) {
 		fprintf(stderr, "Couldn't read file.\n");
 		ArenaDestroy(&heap);
 		fclose(file);

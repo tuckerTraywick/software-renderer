@@ -30,9 +30,8 @@ typedef struct BmpHeader {
 	uint32_t importantColors;
 } BmpHeader;
 
-// Assumes `sprite` has already been initialized and has a bitmap large enough to hold the sprite in
-// stored in `file`. Returns true if the sprite was read successfully.
-bool SpriteReadFromBmp(FILE *file, Sprite *sprite);
+// Returns true if the header was successfully read from the file.
+bool readBmpHeader(FILE *file, BmpHeader *header);
 
 // Treats the sprite as a row of tiles `height` pixels tall and returns the `index`th tile. Used for
 // getting individual sprites from an atlas.
@@ -41,13 +40,14 @@ Sprite SpriteGetVerticalSlice(Sprite *sprite, uint32_t height, uint32_t index);
 // Returns the sprite for the given character from the given font atlas. Each character must be 8x8.
 Sprite SpriteGetFontCharacter(Sprite *font, char ch);
 
+// Assumes `sprite` has already been initialized and has a bitmap large enough to hold the sprite in
+// stored in `file`. Returns true if the sprite was read successfully.
+bool SpriteReadFromBmp(Sprite *sprite, FILE *file);
+
 // Copies the dimensions and the bitmap's content from `source` to `destination`.
 void SpriteCopy(Sprite *source, Sprite *destination);
 
 // Makes every opaque pixel in `sprite` have value `color`. Used to color font characters.
 void SpriteApplyColor(Sprite *sprite, uint32_t color);
-
-// Returns true if the header was successfully read from the file.
-bool readBmpHeader(FILE *file, BmpHeader *header);
 
 #endif // SPRITE_H
