@@ -1,17 +1,9 @@
-#include <stdio.h>
+#include <assert.h>
 
 #include <stdint.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include "sprite.h"
-
-static uint32_t bgra(uint32_t rgba) {
-	uint8_t b = rgba >> 16;
-	uint8_t g = rgba >> 8;
-	uint8_t r = rgba;
-	uint8_t a = rgba >> 24;
-	return b | g | r | a;
-}
 
 bool readBmpHeader(FILE *file, BmpHeader *header) {
 	// Skip the signature.
@@ -46,4 +38,22 @@ bool SpriteReadFromBmp(FILE *file, Sprite *sprite) {
 	sprite->width = header.width;
 	sprite->height = header.height;
 	return valuesRead == header.width*header.height;
+}
+
+Atlas AtlasFromSprite(Sprite *sprite, uint32_t spriteWidth, uint32_t spriteHeight) {
+	return (Atlas){
+		.spriteWidth = spriteWidth,
+		.spriteHeight = spriteHeight,
+		.spriteCount = sprite->height/spriteHeight,
+		.bitmap = sprite->bitmap,
+	};
+}
+
+Sprite SpriteFromAtlas(Atlas *atlas, size_t spriteIndex) {
+	assert(spriteIndex < atlas->spriteCount && "Index out of bounds.");
+	return (Sprite){
+		.width = atlas->spriteWidth,
+		.height = atlas->spriteHeight,
+		.bitmap = atlas->bitmap + spriteIndex*atlas->spriteHeight,
+	};
 }

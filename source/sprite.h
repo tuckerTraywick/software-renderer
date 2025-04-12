@@ -5,14 +5,14 @@
 #include <stdbool.h>
 #include <stdio.h>
 
-// Represents a single bitmap and its dimensions.
+// Represents a bitmap and its dimensions.
 typedef struct Sprite {
 	uint32_t width;
 	uint32_t height;
 	uint32_t *bitmap; // Not owned by this struct. The user of this struct is responsible for managing the memory for bitmaps.
 } Sprite;
 
-// Represents multiple bitmaps.
+// Represents multiple bitmaps that share one contiguous block of memory.
 typedef struct Atlas {
 	uint32_t spriteWidth;
 	uint32_t spriteHeight;
@@ -44,5 +44,9 @@ bool SpriteReadFromBmp(FILE *file, Sprite *sprite);
 
 // Returns true if the header was successfully read from the file.
 bool readBmpHeader(FILE *file, BmpHeader *header);
+
+Atlas AtlasFromSprite(Sprite *sprite, uint32_t spriteWidth, uint32_t spriteHeight);
+
+Sprite SpriteFromAtlas(Atlas *atlas, size_t spriteIndex);
 
 #endif // SPRITE_H
