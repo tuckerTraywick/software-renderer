@@ -5,6 +5,14 @@
 #include <stdio.h>
 #include "sprite.h"
 
+static uint32_t bgra(uint32_t rgba) {
+	uint8_t b = rgba >> 16;
+	uint8_t g = rgba >> 8;
+	uint8_t r = rgba;
+	uint8_t a = rgba >> 24;
+	return b | g | r | a;
+}
+
 bool readBmpHeader(FILE *file, BmpHeader *header) {
 	// Skip the signature.
 	uint16_t signature = 0;
@@ -18,9 +26,6 @@ bool readBmpHeader(FILE *file, BmpHeader *header) {
 bool SpriteReadFromBmp(FILE *file, Sprite *sprite) {
 	BmpHeader header = {0};
 	if (!readBmpHeader(file, &header)) {
-		return false;
-	}
-	if (sprite->width < header.width || sprite->height < header.height) {
 		return false;
 	}
 	fseek(file, header.dataOffset, SEEK_SET);

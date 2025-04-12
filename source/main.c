@@ -10,12 +10,12 @@
 
 int main(void) {
 	Arena heap = ArenaCreate(4*1024);
-	FILE *file = fopen("mario.bmp", "rb");
+	FILE *file = fopen("A.bmp", "rb");
 	assert(file);
 
 	Sprite sprite = {
-		.width = 512,
-		.height = 512,
+		.width = 8,
+		.height = 8,
 		.bitmap = ArenaAllocate(&heap, sprite.width*sprite.height*sizeof *sprite.bitmap),
 	};
 	if (!SpriteReadFromBmp(file, &sprite)) {
@@ -26,12 +26,13 @@ int main(void) {
 	}
 
 	Window window = WindowCreate("my window", 800, 600, 1920, 1080);
+	WindowFill(&window, COLOR_BLACK);
 	if (!WindowIsOpen(&window)) {
 		fprintf(stderr, "Couldn't create window. Exiting.\n");
 		return 1;
 	}
 
-	WindowDrawSprite(&window, &sprite, 0, 0, 1);
+	WindowDrawSprite(&window, &sprite, 100, 100, 5);
 	while (WindowIsOpen(&window)) {
 		WindowUpdate(&window);
 	}

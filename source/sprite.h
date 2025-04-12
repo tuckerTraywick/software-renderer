@@ -5,12 +5,20 @@
 #include <stdbool.h>
 #include <stdio.h>
 
-// Represents a bitmap and its dimensions.
+// Represents a single bitmap and its dimensions.
 typedef struct Sprite {
 	uint32_t width;
 	uint32_t height;
 	uint32_t *bitmap; // Not owned by this struct. The user of this struct is responsible for managing the memory for bitmaps.
 } Sprite;
+
+// Represents multiple bitmaps.
+typedef struct Atlas {
+	uint32_t spriteWidth;
+	uint32_t spriteHeight;
+	size_t spriteCount;
+	uint32_t *bitmap; // Sprites are arranged in a vertical row.
+} Atlas;
 
 // Represents the header of a .bmp file. Omits the signature so the fields are aligned correctly.
 typedef struct BmpHeader {
