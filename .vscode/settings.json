@@ -4,6 +4,7 @@
 		"window.h": "c",
 		"minifb.h": "c",
 		"minifb_enums.h": "c",
-		"stdlib.h": "c"
+		"stdlib.h": "c",
+		"color.h": "c"
 	}
 }

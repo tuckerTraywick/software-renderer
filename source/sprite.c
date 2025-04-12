@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include "sprite.h"
+#include "color.h"
 
 bool readBmpHeader(FILE *file, BmpHeader *header) {
 	// Skip the signature.
@@ -13,6 +14,23 @@ bool readBmpHeader(FILE *file, BmpHeader *header) {
 	}
 	size_t valuesRead = fread(header, sizeof *header, 1, file);
 	return valuesRead == 1;
+}
+
+void SpriteCopy(Sprite *source, Sprite *destination) {
+	assert(source->width <= destination->width && source->height <= destination->height && "Cannot copy to a smaller sprite.");
+	for (uint32_t i = 0; i < source->width*source->height; ++i) {
+		destination->bitmap[i] = source->bitmap[i];
+	}
+	destination->width = source->width;
+	destination->height = source->height;
+}
+
+void SpriteApplyColor(Sprite *sprite, uint32_t color) {
+	for (uint32_t i = 0; i < sprite->width*sprite->height; ++i) {
+		if (A(sprite->bitmap[i])) {
+			sprite->bitmap[i] = color;
+		}
+	}
 }
 
 bool SpriteReadFromBmp(FILE *file, Sprite *sprite) {

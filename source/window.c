@@ -9,6 +9,9 @@
 
 #define abs(x) ((x < 0) ? (-x) : (x))
 
+// Used for coloring characters.
+static uint32_t characterScratch[8*8];
+
 Window WindowCreate(const char *name, uint32_t width, uint32_t height, uint32_t maxWidth, uint32_t maxHeight) {
 	Window window = {
 		.maxWidth = maxWidth,
@@ -100,7 +103,7 @@ void WindowDrawSprite(Window *window, Sprite *sprite, uint32_t x, uint32_t y, ui
 	}
 }
 
-void WindowDrawText(Window *window, Sprite *font, const char *text, uint32_t x, uint32_t y, uint32_t scale) {
+void WindowDrawText(Window *window, Sprite *font, const char *text, uint32_t color, uint32_t x, uint32_t y, uint32_t scale) {
 	uint32_t characterX = x;
 	uint32_t characterY = y;
 	while (*text) {
@@ -111,7 +114,15 @@ void WindowDrawText(Window *window, Sprite *font, const char *text, uint32_t x, 
 			continue;
 		}
 		Sprite ch = SpriteGetFontCharacter(font, *text);
-		WindowDrawSprite(window, &ch, characterX, characterY, scale);
+		Sprite coloredCh = {
+			.width = ch.width,
+			.height = ch.height,
+			.bitmap = characterScratch,
+		};
+		// TODO: Figure out a way to color fonts without copying every character every time. Maybe make multiple colors of the same font atlas?
+		SpriteCopy(&ch, &coloredCh);
+		SpriteApplyColor(&coloredCh, color);
+		WindowDrawSprite(window, &coloredCh, characterX, characterY, scale);
 		characterX += 8*scale;
 		++text;
 	}

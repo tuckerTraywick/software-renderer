@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include "MiniFB.h"
 #include "arena.h"
+#include "color.h"
 #include "sprite.h"
 #include "window.h"
 
@@ -24,6 +25,8 @@ int main(void) {
 		fclose(file);
 		return 1;
 	}
+	Sprite ch = SpriteGetFontCharacter(&font, 'B');
+	SpriteApplyColor(&ch, COLOR_RED);
 
 	Window window = WindowCreate("my window", 800, 600, 1920, 1080);
 	if (!WindowIsOpen(&window)) {
@@ -32,7 +35,7 @@ int main(void) {
 	}
 	
 	WindowFill(&window, COLOR_BLACK);
-	WindowDrawText(&window, &font, "ABC\nBC", 100, 100, 5);
+	WindowDrawText(&window, &font, "ABC\nBC", COLOR_RED, 100, 100, 5);
 	while (WindowIsOpen(&window)) {
 		WindowUpdate(&window);
 	}

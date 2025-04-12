@@ -4,21 +4,8 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include "MiniFB.h"
+#include "color.h"
 #include "sprite.h"
-
-#define RGB(r, g, b) (MFB_RGB(r, g, b))
-
-#define ARGB(a, r, g, b) (MFB_ARGB(a, r, g, b))
-
-#define COLOR_BLACK (ARGB(255, 0, 0, 0))
-
-#define COLOR_WHITE (ARGB(255, 255, 255, 255))
-
-#define COLOR_RED (ARGB(255, 255, 0, 0))
-
-#define COLOR_GREEN (ARGB(255, 0, 255, 0))
-
-#define COLOR_BLUE (ARGB(255, 0, 0, 255))
 
 typedef struct Window {
 	const char *name;
@@ -43,7 +30,7 @@ void WindowDrawLine(Window *window, uint32_t color, uint32_t startX, uint32_t st
 
 void WindowDrawSprite(Window *window, Sprite *sprite, uint32_t x, uint32_t y, uint32_t scale);
 
-void WindowDrawText(Window *window, Sprite *font, const char *text, uint32_t x, uint32_t y, uint32_t scale);
+void WindowDrawText(Window *window, Sprite *font, const char *text, uint32_t color, uint32_t x, uint32_t y, uint32_t scale);
 
 uint32_t WindowGetWidth(Window *window);
 
