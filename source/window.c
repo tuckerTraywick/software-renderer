@@ -9,6 +9,8 @@
 
 #define abs(x) ((x < 0) ? (-x) : (x))
 
+#define round(x) ( ((x) > 0.5f) ? (uint32_t)((x) + 1) : (uint32_t)(x) )
+
 // Used for coloring characters.
 static uint32_t characterScratch[8*8];
 
@@ -102,16 +104,16 @@ void WindowDrawRectangle(Window *window, uint32_t color, uint32_t x, uint32_t y,
 	}
 }
 
-void WindowDrawSprite(Window *window, Sprite *sprite, uint32_t x, uint32_t y, uint32_t scale) {
-	for (uint32_t offsetY = 0; offsetY < sprite->height*scale; ++offsetY) {
-		for (uint32_t offsetX = 0; offsetX < sprite->width*scale; ++offsetX) {
+void WindowDrawSprite(Window *window, Sprite *sprite, uint32_t x, uint32_t y, float scale) {
+	for (uint32_t offsetY = 0; offsetY < (uint32_t)(sprite->height*scale); ++offsetY) {
+		for (uint32_t offsetX = 0; (uint32_t)(offsetX < sprite->width*scale); ++offsetX) {
 			// Use nearest-neighbor scaling to render the bitmap.
-			WindowDrawPixel(window, sprite->bitmap[offsetY/scale*sprite->width + offsetX/scale], x + offsetX, y + offsetY);
+			WindowDrawPixel(window, sprite->bitmap[(uint32_t)(offsetY/scale)*sprite->width + (uint32_t)(offsetX/scale)], x + offsetX, y + offsetY);
 		}
 	}
 }
 
-void WindowDrawText(Window *window, Sprite *font, const char *text, uint32_t color, uint32_t x, uint32_t y, uint32_t scale) {
+void WindowDrawText(Window *window, Sprite *font, const char *text, uint32_t color, uint32_t x, uint32_t y, float scale) {
 	uint32_t characterX = x;
 	uint32_t characterY = y;
 	while (*text) {

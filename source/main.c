@@ -11,7 +11,7 @@
 
 int main(void) {
 	Arena heap = ArenaCreate(4*1024);
-	FILE *file = fopen("atlas.bmp", "rb");
+	FILE *file = fopen("font.bmp", "rb");
 	assert(file);
 
 	Sprite font = {
@@ -25,8 +25,6 @@ int main(void) {
 		fclose(file);
 		return 1;
 	}
-	Sprite ch = SpriteGetFontCharacter(&font, 'B');
-	SpriteApplyColor(&ch, COLOR_RED);
 
 	Window window = WindowCreate("my window", 800, 600, 1920, 1080);
 	if (!WindowIsOpen(&window)) {
@@ -36,7 +34,7 @@ int main(void) {
 	
 	WindowFill(&window, COLOR_BLACK);
 	WindowDrawRectangle(&window, COLOR_RED, 200, 200, 100, 50);
-	WindowDrawText(&window, &font, "ABC\nBC", COLOR_RED, 100, 100, 5);
+	WindowDrawText(&window, &font, "ABC\nBC", COLOR_RED, 100, 100, 3.0);
 	while (WindowIsOpen(&window)) {
 		WindowUpdate(&window);
 	}
