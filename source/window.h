@@ -28,6 +28,8 @@ void WindowDrawPixel(Window *window, uint32_t color, uint32_t x, uint32_t y);
 
 void WindowDrawLine(Window *window, uint32_t color, uint32_t startX, uint32_t startY, uint32_t endX, uint32_t endY);
 
+void WindowDrawRectangle(Window *window, uint32_t color, uint32_t x, uint32_t y, uint32_t width, uint32_t height);
+
 void WindowDrawSprite(Window *window, Sprite *sprite, uint32_t x, uint32_t y, uint32_t scale);
 
 void WindowDrawText(Window *window, Sprite *font, const char *text, uint32_t color, uint32_t x, uint32_t y, uint32_t scale);

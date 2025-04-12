@@ -94,6 +94,14 @@ void WindowDrawLine(Window *window, uint32_t color, uint32_t startX, uint32_t st
 	}
 }
 
+void WindowDrawRectangle(Window *window, uint32_t color, uint32_t x, uint32_t y, uint32_t width, uint32_t height) {
+	for (uint32_t offsetY = 0; offsetY < height; ++offsetY) {
+		for (uint32_t offsetX = 0; offsetX < width; ++offsetX) {
+			WindowDrawPixel(window, color, x + offsetX, y + offsetY);
+		}
+	}
+}
+
 void WindowDrawSprite(Window *window, Sprite *sprite, uint32_t x, uint32_t y, uint32_t scale) {
 	for (uint32_t offsetY = 0; offsetY < sprite->height*scale; ++offsetY) {
 		for (uint32_t offsetX = 0; offsetX < sprite->width*scale; ++offsetX) {
