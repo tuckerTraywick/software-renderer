@@ -100,6 +100,23 @@ void WindowDrawSprite(Window *window, Sprite *sprite, uint32_t x, uint32_t y, ui
 	}
 }
 
+void WindowDrawText(Window *window, Sprite *font, const char *text, uint32_t x, uint32_t y, uint32_t scale) {
+	uint32_t characterX = x;
+	uint32_t characterY = y;
+	while (*text) {
+		if (*text == '\n') {
+			characterX = x;
+			characterY += 9*scale;
+			++text;
+			continue;
+		}
+		Sprite ch = SpriteGetFontCharacter(font, *text);
+		WindowDrawSprite(window, &ch, characterX, characterY, scale);
+		characterX += 8*scale;
+		++text;
+	}
+}
+
 uint32_t WindowGetWidth(Window *window) {
 	return mfb_get_window_width(window->miniFBWindow);
 }

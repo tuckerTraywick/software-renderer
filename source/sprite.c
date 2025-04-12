@@ -47,3 +47,7 @@ Sprite SpriteGetVerticalSlice(Sprite *sprite, uint32_t height, uint32_t index) {
 		.bitmap = sprite->bitmap + index*height*sprite->width,
 	};
 }
+
+Sprite SpriteGetFontCharacter(Sprite *font, char ch) {
+	return SpriteGetVerticalSlice(font, 8, (uint32_t)ch - 65);
+}

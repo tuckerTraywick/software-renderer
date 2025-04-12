@@ -34,8 +34,12 @@ typedef struct BmpHeader {
 // stored in `file`. Returns true if the sprite was read successfully.
 bool SpriteReadFromBmp(FILE *file, Sprite *sprite);
 
-// Returns a chunk of the given sprite with the given height.
+// Treats the sprite as a row of tiles `height` pixels tall and returns the `index`th tile. Used for
+// getting individual sprites from an atlas.
 Sprite SpriteGetVerticalSlice(Sprite *sprite, uint32_t height, uint32_t index);
+
+// Returns the sprite for the given character from the given font atlas. Each character must be 8x8.
+Sprite SpriteGetFontCharacter(Sprite *font, char ch);
 
 // Returns true if the header was successfully read from the file.
 bool readBmpHeader(FILE *file, BmpHeader *header);
