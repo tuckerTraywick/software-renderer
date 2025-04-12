@@ -34,7 +34,7 @@ int main(void) {
 	
 	WindowFill(&window, COLOR_BLACK);
 	WindowDrawRectangle(&window, COLOR_RED, 200, 200, 100, 50);
-	WindowDrawText(&window, &font, "ABC\nBC", COLOR_RED, 100, 100, 3.0);
+	WindowDrawText(&window, &font, "ABC\nBC", COLOR_RED, 100, 100, 2.5);
 	while (WindowIsOpen(&window)) {
 		WindowUpdate(&window);
 	}

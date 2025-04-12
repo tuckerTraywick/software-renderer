@@ -97,6 +97,13 @@ void WindowDrawLine(Window *window, uint32_t color, uint32_t startX, uint32_t st
 }
 
 void WindowDrawRectangle(Window *window, uint32_t color, uint32_t x, uint32_t y, uint32_t width, uint32_t height) {
+	WindowDrawLine(window, color, x, y, x + width, y);
+	WindowDrawLine(window, color, x, y + height, x + width, y + height);
+	WindowDrawLine(window, color, x, y, x, y + height);
+	WindowDrawLine(window, color, x + width, y, x + width, y + height);
+}
+
+void WindowDrawFilledRectangle(Window *window, uint32_t color, uint32_t x, uint32_t y, uint32_t width, uint32_t height) {
 	for (uint32_t offsetY = 0; offsetY < height; ++offsetY) {
 		for (uint32_t offsetX = 0; offsetX < width; ++offsetX) {
 			WindowDrawPixel(window, color, x + offsetX, y + offsetY);
