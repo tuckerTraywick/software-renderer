@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <stdio.h>
 
 #include <stdint.h>
@@ -7,37 +8,22 @@
 #include "sprite.h"
 #include "window.h"
 
-#define w COLOR_RED
-
-#define b COLOR_BLACK
-
-static uint32_t bitmap[] = {
-	b, w, w, w, w, w, w, b,
-	b, w, b, b, b, b, w, b,
-	b, w, b, b, b, b, w, b,
-	b, w, b, b, b, b, w, b,
-	b, w, b, b, b, b, w, b,
-	b, w, b, b, b, b, w, b,
-	b, w, b, b, b, b, w, b,
-	b, w, w, w, w, w, w, b,
-};
-
 int main(void) {
-	Arena arena = ArenaCreate(4*1024);
-	int *a = ArenaAllocate(&arena, sizeof *a);
-	int *c = ArenaAllocate(&arena, sizeof *c);
-	*a = 1;
-	*c = 2;
-	ArenaDeallocate(&arena, sizeof *c);
-	int *d = ArenaAllocate(&arena, sizeof *d);
-	printf("a = %d, d = %d\n", *a, *d);
-	ArenaDestroy(&arena);
+	Arena heap = ArenaCreate(4*1024);
+	FILE *file = fopen("mario.bmp", "rb");
+	assert(file);
 
 	Sprite sprite = {
-		.width = 8,
-		.height = 8,
-		.bitmap = bitmap,
+		.width = 512,
+		.height = 512,
+		.bitmap = ArenaAllocate(&heap, sprite.width*sprite.height*sizeof *sprite.bitmap),
 	};
+	if (!SpriteReadFromBmp(file, &sprite)) {
+		fprintf(stderr, "Couldn't read file.\n");
+		ArenaDestroy(&heap);
+		fclose(file);
+		return 1;
+	}
 
 	Window window = WindowCreate("my window", 800, 600, 1920, 1080);
 	if (!WindowIsOpen(&window)) {
@@ -45,10 +31,12 @@ int main(void) {
 		return 1;
 	}
 
-	// WindowDrawSprite(&window, &sprite, 300, 300, 10);
+	WindowDrawSprite(&window, &sprite, 0, 0, 1);
 	while (WindowIsOpen(&window)) {
 		WindowUpdate(&window);
 	}
+
+	ArenaDestroy(&heap);
 	WindowDestroy(&window);
 	return 0;
 }
