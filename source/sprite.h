@@ -7,10 +7,12 @@
 
 // Represents a bitmap and its dimensions.
 typedef struct Sprite {
-	uint32_t width;
-	uint32_t height;
 	uint32_t *bitmap; // Not owned by this struct. The user of this struct is responsible for managing the memory for bitmaps.
+	uint16_t width;
+	uint16_t height;
 } Sprite;
+
+typedef Sprite Atlas;
 
 // Represents the header of a .bmp file. Omits the signature so the fields are aligned correctly.
 typedef struct BmpHeader {
@@ -30,24 +32,26 @@ typedef struct BmpHeader {
 	uint32_t importantColors;
 } BmpHeader;
 
-// Returns true if the header was successfully read from the file.
-bool readBmpHeader(FILE *file, BmpHeader *header);
+Atlas AtlasReadFromFile(FILE *file);
 
-// Treats the sprite as a row of tiles `height` pixels tall and returns the `index`th tile. Used for
-// getting individual sprites from an atlas.
-Sprite SpriteGetVerticalSlice(Sprite *sprite, uint32_t height, uint32_t index);
+Atlas AtlasReadFromPath(const char *path);
 
-// Returns the sprite for the given character from the given font atlas. Each character must be 8x8.
-Sprite SpriteGetFontCharacter(Sprite *font, char ch);
+void AtlasDestroy(Atlas *atlas);
 
-// Assumes `sprite` has already been initialized and has a bitmap large enough to hold the sprite in
-// stored in `file`. Returns true if the sprite was read successfully.
-bool SpriteReadFromBmp(Sprite *sprite, FILE *file);
+bool AtlasIsValid(Atlas *atlas);
+
+Sprite AtlasGetSprite(Atlas *atlas, uint16_t spriteHeight, uint16_t spriteIndex);
+
+Atlas AtlasGetSubatlas(Atlas *atlas, uint16_t subatlasHeight, uint16_t subatlasIndex);
 
 // Copies the dimensions and the bitmap's content from `source` to `destination`.
 void SpriteCopy(Sprite *source, Sprite *destination);
 
 // Makes every opaque pixel in `sprite` have value `color`. Used to color font characters.
 void SpriteApplyColor(Sprite *sprite, uint32_t color);
+
+BmpHeader BmpHeaderReadFromFile(FILE *file);
+
+bool BmpHeaderIsValid(BmpHeader *header);
 
 #endif // SPRITE_H

@@ -22,4 +22,6 @@
 
 #define COLOR_BLUE (ARGB(255, 0, 0, 255))
 
+#define COLOR_TRANSPARENT (ARGB(0, 0, 0, 0))
+
 #endif // COLOR_H
