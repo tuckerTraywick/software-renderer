@@ -40,20 +40,10 @@ bool SpriteReadFromBmp(FILE *file, Sprite *sprite) {
 	return valuesRead == header.width*header.height;
 }
 
-Atlas AtlasFromSprite(Sprite *sprite, uint32_t spriteWidth, uint32_t spriteHeight) {
-	return (Atlas){
-		.spriteWidth = spriteWidth,
-		.spriteHeight = spriteHeight,
-		.spriteCount = sprite->height/spriteHeight,
-		.bitmap = sprite->bitmap,
-	};
-}
-
-Sprite SpriteFromAtlas(Atlas *atlas, size_t spriteIndex) {
-	assert(spriteIndex < atlas->spriteCount && "Index out of bounds.");
+Sprite SpriteGetVerticalSlice(Sprite *sprite, uint32_t height, uint32_t index) {
 	return (Sprite){
-		.width = atlas->spriteWidth,
-		.height = atlas->spriteHeight,
-		.bitmap = atlas->bitmap + spriteIndex*atlas->spriteHeight,
+		.width = sprite->width,
+		.height = height,
+		.bitmap = sprite->bitmap + index*height*sprite->width,
 	};
 }

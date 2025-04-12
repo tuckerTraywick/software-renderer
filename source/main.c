@@ -13,19 +13,18 @@ int main(void) {
 	FILE *file = fopen("atlas.bmp", "rb");
 	assert(file);
 
-	Sprite sprite = {
+	Sprite atlas = {
 		.width = 8,
 		.height = 16,
-		.bitmap = ArenaAllocate(&heap, sprite.width*sprite.height*sizeof *sprite.bitmap),
+		.bitmap = ArenaAllocate(&heap, atlas.width*atlas.height*sizeof *atlas.bitmap),
 	};
-	if (!SpriteReadFromBmp(file, &sprite)) {
+	if (!SpriteReadFromBmp(file, &atlas)) {
 		fprintf(stderr, "Couldn't read file.\n");
 		ArenaDestroy(&heap);
 		fclose(file);
 		return 1;
 	}
-	Atlas atlas = AtlasFromSprite(&sprite, 8, 8);
-	Sprite a = SpriteFromAtlas(&atlas, 0);
+	Sprite a = SpriteGetVerticalSlice(&atlas, 8, 1);
 
 	Window window = WindowCreate("my window", 800, 600, 1920, 1080);
 	WindowFill(&window, COLOR_BLACK);
