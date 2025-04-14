@@ -1,10 +1,14 @@
 #include "font.h"
 #include "sprite.h"
 
-char defaultFontBitmap[FONT_SPRITE_COUNT*FONT_SPRITE_WIDTH*FONT_SPRITE_HEIGHT*4];
+char default_font_bitmap[FONT_SPRITE_COUNT*FONT_SPRITE_WIDTH*FONT_SPRITE_HEIGHT*4];
 
-Font defaultFont = {
+Font default_font = {
 	.width = FONT_SPRITE_WIDTH,
 	.height = FONT_SPRITE_COUNT*FONT_SPRITE_HEIGHT,
-	.bitmap = (uint32_t*)defaultFontBitmap,
+	.bitmap = (uint32_t*)default_font_bitmap,
 };
+
+Sprite Font_get_character_sprite(Font *font, char ch) {
+	return Atlas_get_sprite((Atlas*)font, 8, (uint32_t)ch - 65);
+}

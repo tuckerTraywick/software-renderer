@@ -10,57 +10,60 @@
 
 typedef struct Theme {
 	Font *font;
-	float fontScale;
-	float uiScale;
-	uint32_t backgroundColor;
-	uint32_t activeBorderColor;
-	uint32_t inactiveBorderColor;
-	uint32_t activeFillColor;
-	uint32_t inactiveFillColor;
-	uint32_t activeTextColor;
-	uint32_t inactiveTextColor;
+	float font_scale;
+	float ui_scale;
+	uint32_t background_color;
+	uint32_t active_border_color;
+	uint32_t inactive_border_color;
+	uint32_t active_fill_color;
+	uint32_t inactive_fill_color;
+	uint32_t active_text_color;
+	uint32_t inactive_text_color;
 } Theme;
+
+struct Window;
+// Used for immediate rendering of 2d primitives.
+typedef struct Canvas {
+	struct Window *window;
+	uint16_t x;
+	uint16_t y;
+	uint16_t width;
+	uint16_t height;
+} Canvas;
 
 typedef struct Window {
 	const char *name;
-	uint32_t maxWidth;
-	uint32_t maxHeight;
+	uint16_t max_width;
+	uint16_t max_height;
 	Theme *theme;
-	bool isOpen;
-	uint32_t *frameBuffer;
-	struct mfb_window *miniFBWindow;
+	Canvas default_canvas;
+	bool is_open;
+	uint32_t *frame_buffer;
+	struct mfb_window *mfb_window;
 } Window;
 
-extern Theme defaultTheme;
+typedef struct Label {
+	const char *text;
+} Label;
 
-Window WindowCreate(const char *name, uint32_t width, uint32_t height, uint32_t maxWidth, uint32_t maxHeight);
+extern Theme default_theme;
 
-void WindowDestroy(Window *window);
+Window Window_create(const char *name, uint16_t width, uint16_t height, uint16_t max_width, uint16_t max_height);
 
-void WindowUpdate(Window *window);
+void Window_destroy(Window *window);
 
-void WindowFill(Window *window);
+void Window_update(Window *window);
 
-void WindowMove(Window *window, uint32_t vertical, uint32_t horizontal);
+bool Window_is_open(Window *window);
 
-void WindowDrawPixel(Window *window);
+Canvas *WindowGetDefaultCanvas(Window *window);
 
-void WindowDrawLine(Window *window, uint32_t xLength, uint32_t yLength);
+Canvas *WindowGetCanvas(Window *window, uint16_t x, uint16_t y, uint16_t width, uint16_t height);
 
-void WindowDrawRectangle(Window *window, uint32_t x, uint32_t y, uint32_t width, uint32_t height);
+Canvas *WindowAddCanvas(Window *window, uint16_t width, uint16_t height);
 
-void WindowDrawFilledRectangle(Window *window, uint32_t x, uint32_t y, uint32_t width, uint32_t height);
+Label *WindowAddLabel(Window *window, const char *text);
 
-void WindowDrawSprite(Window *window, Sprite *sprite, uint32_t x, uint32_t y, float scale);
 
-void WindowDrawText(Window *window, const char *text, uint32_t x, uint32_t y, uint32_t *width, uint32_t *height);
-
-void WindowDrawButton(Window *window, bool *value, const char *text);
-
-uint32_t WindowGetWidth(Window *window);
-
-uint32_t WindowGetHeight(Window *window);
-
-bool WindowIsOpen(Window *window);
 
 #endif // WINDOW_H

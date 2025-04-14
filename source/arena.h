@@ -11,12 +11,12 @@ typedef struct Arena {
 	void *data;
 } Arena;
 
-Arena ArenaCreate(size_t capacity);
+Arena Arena_create(size_t capacity);
 
-void ArenaDestroy(Arena *arena);
+void Arena_destroy(Arena *arena);
 
-void *ArenaAllocate(Arena *arena, size_t size);
+void *Arena_allocate(Arena *arena, size_t size);
 
-void ArenaDeallocate(Arena *arena, size_t amount);
+void Arena_deallocate(Arena *arena, size_t amount);
 
 #endif // ARENA_H

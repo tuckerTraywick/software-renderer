@@ -7,7 +7,7 @@
 
 // Represents a bitmap and its dimensions.
 typedef struct Sprite {
-	uint32_t *bitmap; // Not owned by this struct. The user of this struct is responsible for managing the memory for bitmaps.
+	uint32_t *bitmap; // Not owned by sprites. Is owned by atlases and fonts.
 	uint16_t width;
 	uint16_t height;
 } Sprite;
@@ -15,43 +15,43 @@ typedef struct Sprite {
 typedef Sprite Atlas;
 
 // Represents the header of a .bmp file. Omits the signature so the fields are aligned correctly.
-typedef struct BmpHeader {
-	uint32_t fileSize;
+typedef struct Bmp_Header {
+	uint32_t file_size;
 	uint32_t reserved; // Unused.
-	uint32_t dataOffset;
-	uint32_t infoHeaderSize; // Always 40.
+	uint32_t data_offset;
+	uint32_t info_headerSize; // Always 40.
 	uint32_t width;
 	uint32_t height;
 	uint16_t planes;
-	uint16_t bitCount;
+	uint16_t bit_count;
 	uint32_t compression;
-	uint32_t imageSize;
-	uint32_t horizontalResolution;
-	uint32_t verticalResolution;
-	uint32_t colorsUsed;
-	uint32_t importantColors;
-} BmpHeader;
+	uint32_t image_size;
+	uint32_t horizontal_resolution;
+	uint32_t vertical_resolution;
+	uint32_t colors_used;
+	uint32_t important_colors;
+} Bmp_Header;
 
-Atlas AtlasReadFromFile(FILE *file);
+Atlas Atlas_read_from_file(FILE *file);
 
-Atlas AtlasReadFromPath(const char *path);
+Atlas Atlas_read_from_path(const char *path);
 
-void AtlasDestroy(Atlas *atlas);
+void Atlas_destroy(Atlas *atlas);
 
-bool AtlasIsValid(Atlas *atlas);
+bool Atlas_is_valid(Atlas *atlas);
 
-Sprite AtlasGetSprite(Atlas *atlas, uint16_t spriteHeight, uint16_t spriteIndex);
+Sprite Atlas_get_sprite(Atlas *atlas, uint16_t sprite_height, uint16_t sprite_index);
 
-Atlas AtlasGetSubatlas(Atlas *atlas, uint16_t subatlasHeight, uint16_t subatlasIndex);
+Atlas Atlas_get_subatlas(Atlas *atlas, uint16_t subatlas_height, uint16_t subatlas_index);
 
 // Copies the dimensions and the bitmap's content from `source` to `destination`.
-void SpriteCopy(Sprite *source, Sprite *destination);
+void Sprite_copy(Sprite *source, Sprite *destination);
 
 // Makes every opaque pixel in `sprite` have value `color`. Used to color font characters.
-void SpriteApplyColor(Sprite *sprite, uint32_t color);
+void Sprite_apply_color(Sprite *sprite, uint32_t color);
 
-BmpHeader BmpHeaderReadFromFile(FILE *file);
+Bmp_Header Bmp_Header_read_from_file(FILE *file);
 
-bool BmpHeaderIsValid(BmpHeader *header);
+bool Bmp_Header_is_valid(Bmp_Header *header);
 
 #endif // SPRITE_H

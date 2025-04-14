@@ -7,8 +7,10 @@
 #include "arena.h"
 #include "color.h"
 #include "sprite.h"
-// #include "window.h"
+#include "font.h"
+#include "window.h"
 
 int main(void) {
+
 	return 0;
 }

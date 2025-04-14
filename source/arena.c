@@ -6,7 +6,7 @@
 
 #define max(a, b) (((a) >= b) ? (a) : (b))
 
-Arena ArenaCreate(size_t capacity) {
+Arena Arena_create(size_t capacity) {
 	Arena arena = {
 		.capacity = capacity,
 		.data = calloc(capacity, 1),
@@ -16,12 +16,12 @@ Arena ArenaCreate(size_t capacity) {
 	return arena;
 }
 
-void ArenaDestroy(Arena *arena) {
+void Arena_destroy(Arena *arena) {
 	free(arena->data);
 	*arena = (Arena){0};
 }
 
-void *ArenaAllocate(Arena *arena, size_t size) {
+void *Arena_allocate(Arena *arena, size_t size) {
 	if (arena->size + size > arena->capacity) {
 		// Grow the data by at least a factor of 2.
 		size_t newCapacity = max(arena->capacity*2, arena->capacity + size);
@@ -36,7 +36,7 @@ void *ArenaAllocate(Arena *arena, size_t size) {
 	return allocation;
 }
 
-void ArenaDeallocate(Arena *arena, size_t amount) {
+void Arena_deallocate(Arena *arena, size_t amount) {
 	assert(amount <= arena->size && "Can't deallocate more than is allocated.");
 	arena->size -= amount;
 }
