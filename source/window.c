@@ -8,6 +8,10 @@
 #include "sprite.h"
 #include "font.h"
 
+#define MAX_WIDTH 1920
+
+#define MAX_HEIGHT 1080
+
 // Used for coloring characters.
 static uint32_t characterScratch[8*8];
 
@@ -15,26 +19,26 @@ Theme default_theme = {
 	.font = &default_font,
 };
 
-Window Window_create(const char *name, uint32_t width, uint32_t height, uint32_t max_width, uint32_t max_height, Theme *theme) {
+Window Window_create(const char *name, uint16_t width, uint16_t height) {
 	Window window = {
-		.max_width = max_width,
-		.max_height = max_height,
-		.theme = theme,
-		.is_open = true,
-		.frame_buffer = calloc(max_width*max_height, sizeof *window.frame_buffer),
+		.theme = &default_theme,
+		.frame_buffer = calloc(MAX_WIDTH*MAX_HEIGHT, sizeof *window.frame_buffer),
 		.mfb_window = mfb_open_ex(name, width, height, WF_RESIZABLE),
 	};
-	// TODO: Handle these errors.
-	assert(window.mfb_window && "Failed to create MiniFB window.");
-	assert(window.frame_buffer && "Failed to allocate framebuffer.");
-	if (!window.mfb_window || !window.frame_buffer) {window.is_open = false;}
+	if (window.mfb_window && !window.frame_buffer) {
+		mfb_close(window.mfb_window);
+	}
+	if (window.frame_buffer && !window.mfb_window) {
+		free(window.frame_buffer);
+	}
 	return window;
 }
 
+bool Window_is_valid(Window *window) {
+	return window->frame_buffer && window->mfb_window;
+}
+
 void Window_destroy(Window *window) {
-	if (window->is_open) {
-		mfb_close(window->mfb_window);
-	}
 	free(window->frame_buffer);
 	*window = (Window){0};
 }
@@ -47,24 +51,15 @@ uint32_t Window_get_height(Window *window) {
 	return mfb_get_window_height(window->mfb_window);
 }
 
-bool Window_is_open(Window *window) {
-	return window->is_open;
-}
-
-void Window_update(Window *window) {
-	if (!window->is_open) {
-		return;
-	}
-
+bool Window_update(Window *window) {
 	mfb_update_state state = mfb_update(window->mfb_window, window->frame_buffer);
 	if (state != STATE_OK) {
-		window->is_open = false;
-		return;
+		return false;
 	}
-
 	if (!mfb_wait_sync(window->mfb_window)) {
-		window->is_open = false;
+		return false;
 	}
+	return true;
 }
 
 void Window_fill(Window *window, uint32_t color) {
@@ -74,19 +69,19 @@ void Window_fill(Window *window, uint32_t color) {
 	}
 }
 
-void Window_draw_pixel(Window *window, uint32_t color, uint32_t x, uint32_t y) {
+void Window_draw_pixel(Window *window, uint32_t color, uint16_t x, uint16_t y) {
 	window->frame_buffer[y*Window_get_width(window) + x] = color;
 }
 
 void Window_draw_line(Window *window, uint32_t color, uint32_t start_x, uint32_t start_y, uint32_t end_x, uint32_t end_y) {
 	// Make sure the coordinates are ordered least to greatest.
 	if (start_x > end_x) {
-		uint32_t temp = start_x;
+		uint16_t temp = start_x;
 		start_x = end_x;
 		end_x = temp;
 	}
 	if (start_y > end_y) {
-		uint32_t temp = start_y;
+		uint16_t temp = start_y;
 		start_y = end_y;
 		end_y = temp;
 	}
@@ -110,31 +105,31 @@ void Window_draw_line(Window *window, uint32_t color, uint32_t start_x, uint32_t
 	}
 }
 
-void Window_draw_rectangle(Window *window, uint32_t color, uint32_t x, uint32_t y, uint32_t width, uint32_t height) {
+void Window_draw_rectangle(Window *window, uint32_t color, uint16_t x, uint16_t y, uint32_t width, uint32_t height) {
 	Window_draw_line(window, color, x, y, x + width, y);
 	Window_draw_line(window, color, x, y + height, x + width, y + height);
 	Window_draw_line(window, color, x, y, x, y + height);
 	Window_draw_line(window, color, x + width, y, x + width, y + height);
 }
 
-void Window_draw_rectangle_filled(Window *window, uint32_t color, uint32_t x, uint32_t y, uint32_t width, uint32_t height) {
-	for (uint32_t offsetY = 0; offsetY < height; ++offsetY) {
-		for (uint32_t offsetX = 0; offsetX < width; ++offsetX) {
-			Window_draw_pixel(window, color, x + offsetX, y + offsetY);
+void Window_draw_rectangle_filled(Window *window, uint32_t color, uint16_t x, uint16_t y, uint32_t width, uint32_t height) {
+	for (uint16_t offset_y = 0; offset_y < height; ++offset_y) {
+		for (uint16_t offset_x = 0; offset_x < width; ++offset_x) {
+			Window_draw_pixel(window, color, x + offset_x, y + offset_y);
 		}
 	}
 }
 
-void Window_draw_sprite(Window *window, Sprite *sprite, uint32_t x, uint32_t y, float scale) {
-	for (uint32_t offsetY = 0; offsetY < (uint32_t)(sprite->height*scale); ++offsetY) {
-		for (uint32_t offsetX = 0; (uint32_t)(offsetX < sprite->width*scale); ++offsetX) {
+void Window_draw_sprite(Window *window, Sprite *sprite, uint16_t x, uint16_t y, float scale) {
+	for (uint16_t offset_y = 0; offset_y < (uint32_t)(sprite->height*scale); ++offset_y) {
+		for (uint16_t offset_x = 0; (uint32_t)(offset_x < sprite->width*scale); ++offset_x) {
 			// Use nearest-neighbor scaling to render the bitmap.
-			Window_draw_pixel(window, sprite->bitmap[(uint32_t)(offsetY/scale)*sprite->width + (uint32_t)(offsetX/scale)], x + offsetX, y + offsetY);
+			Window_draw_pixel(window, sprite->bitmap[(uint32_t)(offset_y/scale)*sprite->width + (uint32_t)(offset_x/scale)], x + offset_x, y + offset_y);
 		}
 	}
 }
 
-void Window_draw_text(Window *window, Font *font, const char *text, uint32_t color, uint32_t x, uint32_t y, float scale) {
+void Window_draw_text(Window *window, Font *font, const char *text, uint32_t color, uint16_t x, uint16_t y, float scale) {
 	uint32_t character_x = x;
 	uint32_t character_y = y;
 	while (*text) {

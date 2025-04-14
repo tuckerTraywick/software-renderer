@@ -19,7 +19,7 @@ typedef struct Bmp_Header {
 	uint32_t file_size;
 	uint32_t reserved; // Unused.
 	uint32_t data_offset;
-	uint32_t info_headerSize; // Always 40.
+	uint32_t info_header_size; // Always 40.
 	uint32_t width;
 	uint32_t height;
 	uint16_t planes;
