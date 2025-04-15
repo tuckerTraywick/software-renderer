@@ -29,55 +29,32 @@ typedef struct Theme {
 	uint32_t inactive_text_color;
 } Theme;
 
-struct Window;
-// Used for immediate rendering of 2d primitives.
-typedef struct Canvas {
-	struct Window *window;
+typedef struct Viewport {
 	uint16_t x;
 	uint16_t y;
 	uint16_t width;
 	uint16_t height;
-} Canvas;
+	uint32_t *frame_buffer;
+} Viewport;
 
 typedef struct Window {
 	const char *name;
-	// uint16_t max_width;
-	// uint16_t max_height;
 	Theme *theme;
-	Canvas default_canvas;
-	uint32_t *frame_buffer;
+	Viewport global_viewport;
 	struct mfb_window *mfb_window;
 } Window;
 
-typedef struct Widget {
-	struct Widget *next;
-	struct Widget *previous;
-	struct Widget *parent;
-} Widget;
+typedef uint16_t Widget;
 
-typedef struct Frame {
-	Widget widget;
-	Widget *child;
-	Alignment_Type vertical_alignment;
-	Alignment_Type horizontal_alignment;
-} Frame;
+typedef Widget Frame;
 
-typedef struct Row {
-	Widget widget;
-	Widget *child;
-	Alignment_Type horizontal_alignment;
-} Row;
+typedef Widget Row;
 
-typedef struct Column {
-	Widget widget;
-	Widget *child;
-	Alignment_Type vertical_alignment;
-} Column;
+typedef Widget Column;
 
-typedef struct Label {
-	Widget widget;
-	const char *text;
-} Label;
+typedef Widget Canvas;
+
+typedef Widget Label;
 
 extern Theme default_theme;
 
@@ -87,6 +64,18 @@ bool Window_is_valid(Window *window);
 
 void Window_destroy(Window *window);
 
+uint16_t Window_get_width(Window *window);
+
+uint16_t Window_get_height(Window *window);
+
+Viewport *Window_get_global_viewport(Window *window);
+
 bool Window_update(Window *window);
+
+void Window_draw_ui(Window *window);
+
+void Viewport_draw_pixel(Viewport *viewport, uint32_t color, uint16_t x, uint16_t y);
+
+void Viewport_fill(Viewport *viewport, uint32_t color);
 
 #endif // WINDOW_H

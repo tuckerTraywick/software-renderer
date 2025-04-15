@@ -17,6 +17,8 @@ void Arena_destroy(Arena *arena);
 
 void *Arena_allocate(Arena *arena, size_t size);
 
+void *Arena_allocate_aligned(Arena *arena, size_t size, size_t alignment);
+
 void Arena_deallocate(Arena *arena, size_t amount);
 
 #endif // ARENA_H
