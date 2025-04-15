@@ -12,17 +12,28 @@
 
 #define MAX_HEIGHT 1080
 
+#define DEFAULT_WIDGET_CAPACITY 100
+
+typedef enum Widget_Type {
+	CANVAS,
+	FRAME,
+	ROW,
+	LABEL,
+} Widget_Type;
+
 typedef struct Widget_Data {
 	uint16_t next;
 	uint16_t previous;
 	uint16_t parent;
 	union {
 		Viewport canvas;
+		struct {uint16_t child; Alignment_Type horizontal_alignment, vertical_alignment;} frame;
 		struct {uint16_t child; Alignment_Type horizontal_alignment;} row;
 		struct {const char *text;} label;
 	};
 } Widget_Data;
 
+// Used for changing color of character sprites.
 static uint32_t character_scratch[8*8];
 
 Theme default_theme = {
@@ -39,6 +50,8 @@ Window Window_create(const char *name, uint16_t width, uint16_t height) {
 			// TODO: Allow changing the size of the framebuffer.
 			.frame_buffer = calloc(MAX_WIDTH*MAX_HEIGHT, sizeof *window.global_viewport.frame_buffer),
 		},
+		.widget_capacity = DEFAULT_WIDGET_CAPACITY,
+		.widgets = malloc(window.widget_capacity*sizeof *window.widgets),
 		.mfb_window = mfb_open_ex(name, width, height, WF_RESIZABLE),
 	};
 	if (window.mfb_window && !window.global_viewport.frame_buffer) {
@@ -56,8 +69,9 @@ bool Window_is_valid(Window *window) {
 
 void Window_destroy(Window *window) {
 	free(window->global_viewport.frame_buffer);
-	*window = (Window){0};
+	free(window->widgets);
 	mfb_close(window->mfb_window);
+	*window = (Window){0};
 }
 
 uint16_t Window_get_width(Window *window) {
@@ -80,10 +94,6 @@ bool Window_update(Window *window) {
 	window->global_viewport.width = mfb_get_window_width(window->mfb_window);
 	window->global_viewport.height = mfb_get_window_height(window->mfb_window);
 	return true;
-}
-
-void Window_draw_ui(Window *window) {
-
 }
 
 void Viewport_draw_pixel(Viewport *viewport, uint32_t color, uint16_t x, uint16_t y) {
@@ -157,15 +167,15 @@ void Viewport_draw_text(Viewport *viewport, Font *font, const char *text, uint32
 			continue;
 		}
 		Sprite ch = Font_get_character_sprite(font, *text);
-		Sprite coloredCh = {
+		Sprite colored_ch = {
 			.width = ch.width,
 			.height = ch.height,
 			.bitmap = character_scratch,
 		};
 		// TODO: Figure out a way to color fonts without copying every character every time. Maybe make multiple colors of the same font atlas?
-		Sprite_copy(&ch, &coloredCh);
-		Sprite_apply_color(&coloredCh, color);
-		Viewport_draw_sprite(viewport, &coloredCh, character_x, character_y, scale);
+		Sprite_copy(&ch, &colored_ch);
+		Sprite_apply_color(&colored_ch, color);
+		Viewport_draw_sprite(viewport, &colored_ch, character_x, character_y, scale);
 		character_x += 8*scale;
 		++text;
 	}
@@ -175,6 +185,25 @@ void Viewport_fill(Viewport *viewport, uint32_t color) {
 	for (uint32_t i = 0; i < viewport->width*viewport->height; ++i) {
 		viewport->frame_buffer[i] = color;
 	}
+}
+
+
+static Widget Window_allocate_widget(void) {
+
+}
+
+Frame Frame_create(Window *window, Alignment_Type horizontal_alignment, Alignment_Type vertical_alignment) {
+	Widget widget = Window_allocate_widget();
+	if (widget == 0) {
+		return widget;
+	}
+	window->widgets[widget] = (Widget_Data){
+		.frame = {
+			.horizontal_alignment = horizontal_alignment,
+			.vertical_alignment = vertical_alignment,
+		},
+	};
+	return widget;
 }
 
 #undef MAX_WIDTH

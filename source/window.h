@@ -10,10 +10,10 @@
 
 typedef enum Alignment_Type {
 	CENTER,
-	TOP,
-	BOTTOM,
 	LEFT,
 	RIGHT,
+	TOP,
+	BOTTOM,
 } Alignment_Type;
 
 typedef struct Theme {
@@ -41,18 +41,22 @@ typedef struct Window {
 	const char *name;
 	Theme *theme;
 	Viewport global_viewport;
+	struct Widget_Data *widgets;
+	uint16_t widget_capacity;
+	uint16_t widget_count;
+	uint16_t root_widget;
 	struct mfb_window *mfb_window;
 } Window;
 
 typedef uint16_t Widget;
+
+typedef Widget Canvas;
 
 typedef Widget Frame;
 
 typedef Widget Row;
 
 typedef Widget Column;
-
-typedef Widget Canvas;
 
 typedef Widget Label;
 
@@ -72,8 +76,6 @@ Viewport *Window_get_global_viewport(Window *window);
 
 bool Window_update(Window *window);
 
-void Window_draw_ui(Window *window);
-
 void Viewport_draw_pixel(Viewport *viewport, uint32_t color, uint16_t x, uint16_t y);
 
 void Viewport_draw_line(Viewport *viewport, uint32_t color, uint16_t start_x, uint16_t start_y, uint16_t end_x, uint16_t end_y);
@@ -87,5 +89,7 @@ void Viewport_draw_sprite(Viewport *viewport, Sprite *sprite, uint16_t x, uint16
 void Viewport_draw_text(Viewport *viewport, Font *font, const char *text, uint32_t color, uint16_t x, uint16_t y, float scale);
 
 void Viewport_fill(Viewport *viewport, uint32_t color);
+
+Frame Frame_create(Window *window, Alignment_Type horizontal_alignment, Alignment_Type vertical_alignment);
 
 #endif // WINDOW_H

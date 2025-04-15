@@ -11,7 +11,7 @@
 #include "window.h"
 
 int main(void) {
-	Window window = Window_create("window", 1280, 720);
+	Window window = Window_create("window", 800, 600);
 	if (!Window_is_valid(&window)) {
 		fprintf(stderr, "Couldn't open window. Exiting.\n");
 		return 1;
