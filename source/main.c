@@ -16,9 +16,16 @@ int main(void) {
 		fprintf(stderr, "Couldn't open window. Exiting.\n");
 		return 1;
 	}
+	Font font = Font_read_from_path("font.bmp");
+	if (!Font_is_valid(&font)) {
+		fprintf(stderr, "Couldn't read sprite. Exiting.\n");
+		Window_destroy(&window);
+		return 1;
+	}
+
 	Viewport *global = Window_get_global_viewport(&window);
-	Viewport_fill(global, COLOR_RED);
-	Viewport_draw_pixel(global, COLOR_BLUE, 100, 100);
+	Viewport_draw_text(global, &font, "ABC", COLOR_RED, 100, 100, 2.0f);
+
 	do {
 
 	} while (Window_update(&window));

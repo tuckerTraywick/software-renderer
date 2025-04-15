@@ -76,6 +76,16 @@ void Window_draw_ui(Window *window);
 
 void Viewport_draw_pixel(Viewport *viewport, uint32_t color, uint16_t x, uint16_t y);
 
+void Viewport_draw_line(Viewport *viewport, uint32_t color, uint16_t start_x, uint16_t start_y, uint16_t end_x, uint16_t end_y);
+
+void Viewport_draw_rectangle(Viewport *viewport, uint32_t color, uint16_t x, uint16_t y, uint16_t width, uint16_t height);
+
+void Viewport_draw_rectangle_filled(Viewport *viewport, uint32_t color, uint16_t x, uint16_t y, uint16_t width, uint16_t height);
+
+void Viewport_draw_sprite(Viewport *viewport, Sprite *sprite, uint16_t x, uint16_t y, float scale);
+
+void Viewport_draw_text(Viewport *viewport, Font *font, const char *text, uint32_t color, uint16_t x, uint16_t y, float scale);
+
 void Viewport_fill(Viewport *viewport, uint32_t color);
 
 #endif // WINDOW_H

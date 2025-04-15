@@ -23,6 +23,8 @@ typedef struct Widget_Data {
 	};
 } Widget_Data;
 
+static uint32_t character_scratch[8*8];
+
 Theme default_theme = {
 	.font = &default_font,
 };
@@ -88,92 +90,92 @@ void Viewport_draw_pixel(Viewport *viewport, uint32_t color, uint16_t x, uint16_
 	viewport->frame_buffer[y*viewport->width + x] = color;
 }
 
+void Viewport_draw_line(Viewport *viewport, uint32_t color, uint16_t start_x, uint16_t start_y, uint16_t end_x, uint16_t end_y) {
+	// Make sure the coordinates are ordered least to greatest.
+	if (start_x > end_x) {
+		uint16_t temp = start_x;
+		start_x = end_x;
+		end_x = temp;
+	}
+	if (start_y > end_y) {
+		uint16_t temp = start_y;
+		start_y = end_y;
+		end_y = temp;
+	}
+	const float delta_x = (float)end_x - (float)start_x;
+	const float delta_y = (float)end_y - (float)start_y;
+	float x = (float)start_x;
+	float y = (float)start_y;
+	// Draw the line using the DDA algorithm.
+	if (delta_x >= delta_y) {
+		while (x < (float)end_x) {
+			Viewport_draw_pixel(viewport, color, (uint32_t)x, (uint32_t)y);
+			x += 1.0f;
+			y += delta_y/delta_x;
+		}
+	} else {
+		while (y < (float)end_y) {
+			Viewport_draw_pixel(viewport, color, (uint32_t)x, (uint32_t)y);
+			x += delta_x/delta_y;
+			y += 1.0f;
+		}
+	}
+}
+
+void Viewport_draw_rectangle(Viewport *viewport, uint32_t color, uint16_t x, uint16_t y, uint16_t width, uint16_t height) {
+	Viewport_draw_line(viewport, color, x, y, x + width, y);
+	Viewport_draw_line(viewport, color, x, y + height, x + width, y + height);
+	Viewport_draw_line(viewport, color, x, y, x, y + height);
+	Viewport_draw_line(viewport, color, x + width, y, x + width, y + height);
+}
+
+void Viewport_draw_rectangle_filled(Viewport *viewport, uint32_t color, uint16_t x, uint16_t y, uint16_t width, uint16_t height) {
+	for (uint16_t offset_y = 0; offset_y < height; ++offset_y) {
+		for (uint16_t offset_x = 0; offset_x < width; ++offset_x) {
+			Viewport_draw_pixel(viewport, color, x + offset_x, y + offset_y);
+		}
+	}
+}
+
+void Viewport_draw_sprite(Viewport *viewport, Sprite *sprite, uint16_t x, uint16_t y, float scale) {
+	for (uint16_t offset_y = 0; offset_y < (uint32_t)(sprite->height*scale); ++offset_y) {
+		for (uint16_t offset_x = 0; (uint32_t)(offset_x < sprite->width*scale); ++offset_x) {
+			// Use nearest-neighbor scaling to render the bitmap.
+			Viewport_draw_pixel(viewport, sprite->bitmap[(uint32_t)(offset_y/scale)*sprite->width + (uint32_t)(offset_x/scale)], x + offset_x, y + offset_y);
+		}
+	}
+}
+
+void Viewport_draw_text(Viewport *viewport, Font *font, const char *text, uint32_t color, uint16_t x, uint16_t y, float scale) {
+	uint32_t character_x = x;
+	uint32_t character_y = y;
+	while (*text) {
+		if (*text == '\n') {
+			character_x = x;
+			character_y += 9*scale;
+			++text;
+			continue;
+		}
+		Sprite ch = Font_get_character_sprite(font, *text);
+		Sprite coloredCh = {
+			.width = ch.width,
+			.height = ch.height,
+			.bitmap = character_scratch,
+		};
+		// TODO: Figure out a way to color fonts without copying every character every time. Maybe make multiple colors of the same font atlas?
+		Sprite_copy(&ch, &coloredCh);
+		Sprite_apply_color(&coloredCh, color);
+		Viewport_draw_sprite(viewport, &coloredCh, character_x, character_y, scale);
+		character_x += 8*scale;
+		++text;
+	}
+}
+
 void Viewport_fill(Viewport *viewport, uint32_t color) {
 	for (uint32_t i = 0; i < viewport->width*viewport->height; ++i) {
 		viewport->frame_buffer[i] = color;
 	}
 }
-
-// void Window_draw_line(Window *window, uint32_t color, uint32_t start_x, uint32_t start_y, uint32_t end_x, uint32_t end_y) {
-// 	// Make sure the coordinates are ordered least to greatest.
-// 	if (start_x > end_x) {
-// 		uint16_t temp = start_x;
-// 		start_x = end_x;
-// 		end_x = temp;
-// 	}
-// 	if (start_y > end_y) {
-// 		uint16_t temp = start_y;
-// 		start_y = end_y;
-// 		end_y = temp;
-// 	}
-// 	const float delta_x = (float)end_x - (float)start_x;
-// 	const float delta_y = (float)end_y - (float)start_y;
-// 	float x = (float)start_x;
-// 	float y = (float)start_y;
-// 	// Draw the line using the DDA algorithm.
-// 	if (delta_x >= delta_y) {
-// 		while (x < (float)end_x) {
-// 			Window_draw_pixel(window, color, (uint32_t)x, (uint32_t)y);
-// 			x += 1.0f;
-// 			y += delta_y/delta_x;
-// 		}
-// 	} else {
-// 		while (y < (float)end_y) {
-// 			Window_draw_pixel(window, color, (uint32_t)x, (uint32_t)y);
-// 			x += delta_x/delta_y;
-// 			y += 1.0f;
-// 		}
-// 	}
-// }
-
-// void Window_draw_rectangle(Window *window, uint32_t color, uint16_t x, uint16_t y, uint32_t width, uint32_t height) {
-// 	Window_draw_line(window, color, x, y, x + width, y);
-// 	Window_draw_line(window, color, x, y + height, x + width, y + height);
-// 	Window_draw_line(window, color, x, y, x, y + height);
-// 	Window_draw_line(window, color, x + width, y, x + width, y + height);
-// }
-
-// void Window_draw_rectangle_filled(Window *window, uint32_t color, uint16_t x, uint16_t y, uint32_t width, uint32_t height) {
-// 	for (uint16_t offset_y = 0; offset_y < height; ++offset_y) {
-// 		for (uint16_t offset_x = 0; offset_x < width; ++offset_x) {
-// 			Window_draw_pixel(window, color, x + offset_x, y + offset_y);
-// 		}
-// 	}
-// }
-
-// void Window_draw_sprite(Window *window, Sprite *sprite, uint16_t x, uint16_t y, float scale) {
-// 	for (uint16_t offset_y = 0; offset_y < (uint32_t)(sprite->height*scale); ++offset_y) {
-// 		for (uint16_t offset_x = 0; (uint32_t)(offset_x < sprite->width*scale); ++offset_x) {
-// 			// Use nearest-neighbor scaling to render the bitmap.
-// 			Window_draw_pixel(window, sprite->bitmap[(uint32_t)(offset_y/scale)*sprite->width + (uint32_t)(offset_x/scale)], x + offset_x, y + offset_y);
-// 		}
-// 	}
-// }
-
-// void Window_draw_text(Window *window, Font *font, const char *text, uint32_t color, uint16_t x, uint16_t y, float scale) {
-// 	uint32_t character_x = x;
-// 	uint32_t character_y = y;
-// 	while (*text) {
-// 		if (*text == '\n') {
-// 			character_x = x;
-// 			character_y += 9*scale;
-// 			++text;
-// 			continue;
-// 		}
-// 		Sprite ch = Font_get_character_sprite(font, *text);
-// 		Sprite coloredCh = {
-// 			.width = ch.width,
-// 			.height = ch.height,
-// 			.bitmap = characterScratch,
-// 		};
-// 		// TODO: Figure out a way to color fonts without copying every character every time. Maybe make multiple colors of the same font atlas?
-// 		Sprite_copy(&ch, &coloredCh);
-// 		Sprite_apply_color(&coloredCh, color);
-// 		Window_draw_sprite(window, &coloredCh, character_x, character_y, scale);
-// 		character_x += 8*scale;
-// 		++text;
-// 	}
-// }
 
 #undef MAX_WIDTH
 #undef MAX_HEIGHT

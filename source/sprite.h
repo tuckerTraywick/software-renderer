@@ -5,15 +5,6 @@
 #include <stdbool.h>
 #include <stdio.h>
 
-// Represents a bitmap and its dimensions.
-typedef struct Sprite {
-	uint32_t *bitmap; // Not owned by sprites. Is owned by atlases and fonts.
-	uint16_t width;
-	uint16_t height;
-} Sprite;
-
-typedef Sprite Atlas;
-
 // Represents the header of a .bmp file. Omits the signature so the fields are aligned correctly.
 typedef struct Bmp_Header {
 	uint32_t file_size;
@@ -32,17 +23,26 @@ typedef struct Bmp_Header {
 	uint32_t important_colors;
 } Bmp_Header;
 
-Atlas Atlas_read_from_file(FILE *file);
+// Represents a bitmap and its dimensions.
+typedef struct Sprite {
+	uint32_t *bitmap; // Not owned by sprites. Is owned by atlases and fonts.
+	uint16_t width;
+	uint16_t height;
+} Sprite;
 
-Atlas Atlas_read_from_path(const char *path);
+typedef Sprite Atlas;
 
-void Atlas_destroy(Atlas *atlas);
+Bmp_Header Bmp_Header_read_from_file(FILE *file);
 
-bool Atlas_is_valid(Atlas *atlas);
+bool Bmp_Header_is_valid(Bmp_Header *header);
 
-Sprite Atlas_get_sprite(Atlas *atlas, uint16_t sprite_height, uint16_t sprite_index);
+Sprite Sprite_read_from_file(FILE *file);
 
-Atlas Atlas_get_subatlas(Atlas *atlas, uint16_t subatlas_height, uint16_t subatlas_index);
+Sprite Sprite_read_from_path(const char *path);
+
+bool Sprite_is_valid(Sprite *sprite);
+
+void Sprite_destroy(Sprite *sprite);
 
 // Copies the dimensions and the bitmap's content from `source` to `destination`.
 void Sprite_copy(Sprite *source, Sprite *destination);
@@ -50,8 +50,26 @@ void Sprite_copy(Sprite *source, Sprite *destination);
 // Makes every opaque pixel in `sprite` have value `color`. Used to color font characters.
 void Sprite_apply_color(Sprite *sprite, uint32_t color);
 
-Bmp_Header Bmp_Header_read_from_file(FILE *file);
+inline Atlas Atlas_read_from_file(FILE *file) {
+	Sprite sprite = Sprite_read_from_file(file);
+	return *(Atlas*)&sprite;
+}
 
-bool Bmp_Header_is_valid(Bmp_Header *header);
+inline Atlas Atlas_read_from_path(const char *path) {
+	Sprite sprite = Sprite_read_from_path(path);
+	return *(Atlas*)&sprite;
+}
+
+inline bool Atlas_is_valid(Atlas *atlas) {
+	return Sprite_is_valid((Sprite*)atlas);
+}
+
+inline void Atlas_destroy(Atlas *atlas) {
+	Sprite_destroy((Sprite*)atlas);
+}
+
+Sprite Atlas_get_sprite(Atlas *atlas, uint16_t sprite_height, uint16_t sprite_index);
+
+Atlas Atlas_get_subatlas(Atlas *atlas, uint16_t subatlas_height, uint16_t subatlas_index);
 
 #endif // SPRITE_H

@@ -26,51 +26,65 @@ bool Bmp_Header_is_valid(Bmp_Header *header) {
 	return header->width != 0;
 }
 
-Atlas Atlas_read_from_file(FILE *file) {
-	Bmp_Header header = Bmp_Header_read_from_file(file);
-	if (!Bmp_Header_is_valid(&header)) {
-		return (Atlas){0};
+void Sprite_copy(Sprite *source, Sprite *destination) {
+	assert(source->width <= destination->width && source->height <= destination->height && "Cannot copy to a smaller sprite.");
+	for (uint32_t i = 0; i < source->width*source->height; ++i) {
+		destination->bitmap[i] = source->bitmap[i];
 	}
-	fseek(file, header.data_offset, SEEK_SET);
+	destination->width = source->width;
+	destination->height = source->height;
+}
 
-	Atlas atlas = {
-		.width = header.width,
-		.height = header.height,
-		.bitmap = malloc(header.width*header.height*sizeof *atlas.bitmap),
-	};
-	if (!atlas.bitmap) {
-		return (Atlas){0};
-	}
-
-	// Read the rows from the file starting at the last row.
-	uint32_t row = 0;
-	for (row = atlas.height - 1; row >= 0; --row) {
-		if (fread(atlas.bitmap + row*atlas.width, sizeof *atlas.bitmap, atlas.width, file) != (size_t)atlas.width) {
-			break;
+void Sprite_apply_color(Sprite *sprite, uint32_t color) {
+	for (uint32_t i = 0; i < sprite->width*sprite->height; ++i) {
+		if (A(sprite->bitmap[i])) {
+			sprite->bitmap[i] = color;
 		}
 	}
-	if (row != 0) {
-		free(atlas.bitmap);
-		return (Atlas){0};
-	}
-	return atlas;
 }
 
-Atlas Atlas_read_from_path(const char *path) {
+Sprite Sprite_read_from_file(FILE *file) {
+	Bmp_Header header = Bmp_Header_read_from_file(file);
+	if (!Bmp_Header_is_valid(&header)) {
+		return (Sprite){0};
+	}
+	fseek(file, header.data_offset, SEEK_SET);
+	
+	Sprite sprite = {
+		.width = header.width,
+		.height = header.height,
+		.bitmap = malloc(header.width*header.height*sizeof *sprite.bitmap),
+	};
+	if (!sprite.bitmap) {
+		return (Sprite){0};
+	}
+	
+	// Read the rows from the file starting at the last row.
+	int32_t row = 0;
+	for (row = sprite.height - 1; row >= 0; --row) {
+		if (fread(sprite.bitmap + row*sprite.width, sizeof *sprite.bitmap, sprite.width, file) != (size_t)sprite.width) {
+			free(sprite.bitmap);
+			return (Sprite){0};
+		}
+	}
+	return sprite;
+}
+
+Sprite Sprite_read_from_path(const char *path) {
 	FILE *file = fopen(path, "rb");
 	if (!file) {
-		return (Atlas){0};
+		return (Sprite){0};
 	}
-	return Atlas_read_from_file(file);
+	return Sprite_read_from_file(file);
 }
 
-void Atlas_destroy(Atlas *atlas) {
-	free(atlas->bitmap);
-	*atlas = (Atlas){0};
+bool Sprite_is_valid(Sprite *sprite) {
+	return sprite->bitmap != NULL;
 }
 
-bool Atlas_is_valid(Atlas *atlas) {
-	return atlas->bitmap != NULL;
+void Sprite_destroy(Sprite *sprite) {
+	free(sprite->bitmap);
+	*sprite = (Sprite){0};
 }
 
 Sprite Atlas_get_sprite(Atlas *atlas, uint16_t sprite_height, uint16_t sprite_index) {
@@ -89,21 +103,4 @@ Atlas Atlas_get_subatlas(Atlas *atlas, uint16_t subatlas_height, uint16_t subatl
 		.height = subatlas_height,
 		.bitmap = atlas->bitmap + subatlas_index*subatlas_height*atlas->width,
 	};
-}
-
-void Sprite_copy(Sprite *source, Sprite *destination) {
-	assert(source->width <= destination->width && source->height <= destination->height && "Cannot copy to a smaller sprite.");
-	for (uint32_t i = 0; i < source->width*source->height; ++i) {
-		destination->bitmap[i] = source->bitmap[i];
-	}
-	destination->width = source->width;
-	destination->height = source->height;
-}
-
-void Sprite_apply_color(Sprite *sprite, uint32_t color) {
-	for (uint32_t i = 0; i < sprite->width*sprite->height; ++i) {
-		if (A(sprite->bitmap[i])) {
-			sprite->bitmap[i] = color;
-		}
-	}
 }
