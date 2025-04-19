@@ -11,6 +11,8 @@
 
 #define FONT_SPRITE_COUNT 94
 
+#define ASCII_TEST_STRING " !\"$%&'()*+,-./0123456789:;<=>?@`\nABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`\nabcdefghijklmnopqrstuvwxyz{|}~"
+
 typedef Atlas Font;
 
 // `*4` because each pixel is 4 bytes.
