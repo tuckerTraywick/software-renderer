@@ -92,4 +92,6 @@ void Viewport_fill(Viewport *viewport, uint32_t color);
 
 Frame Frame_create(Window *window, Alignment_Type horizontal_alignment, Alignment_Type vertical_alignment);
 
+Label Label_create(Window *window, const char *text);
+
 #endif // WINDOW_H

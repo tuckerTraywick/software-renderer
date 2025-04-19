@@ -10,5 +10,5 @@ Font default_font = {
 };
 
 Sprite Font_get_character_sprite(Font *font, char ch) {
-	return Atlas_get_sprite((Atlas*)font, 8, (uint32_t)ch - 65);
+	return Atlas_get_sprite((Atlas*)font, FONT_SPRITE_HEIGHT, (uint32_t)ch - 32);
 }

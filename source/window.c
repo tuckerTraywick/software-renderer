@@ -22,6 +22,7 @@ typedef enum Widget_Type {
 } Widget_Type;
 
 typedef struct Widget_Data {
+	Widget_Type type;
 	uint16_t next;
 	uint16_t previous;
 	uint16_t parent;
@@ -162,7 +163,7 @@ void Viewport_draw_text(Viewport *viewport, Font *font, const char *text, uint32
 	while (*text) {
 		if (*text == '\n') {
 			character_x = x;
-			character_y += 9*scale;
+			character_y += (FONT_SPRITE_HEIGHT + FONT_PADDING)*scale;
 			++text;
 			continue;
 		}
@@ -176,7 +177,7 @@ void Viewport_draw_text(Viewport *viewport, Font *font, const char *text, uint32
 		Sprite_copy(&ch, &colored_ch);
 		Sprite_apply_color(&colored_ch, color);
 		Viewport_draw_sprite(viewport, &colored_ch, character_x, character_y, scale);
-		character_x += 8*scale;
+		character_x += (FONT_SPRITE_WIDTH + FONT_PADDING)*scale;
 		++text;
 	}
 }
@@ -187,20 +188,40 @@ void Viewport_fill(Viewport *viewport, uint32_t color) {
 	}
 }
 
-
-static Widget Window_allocate_widget(void) {
-
+static Widget Window_allocate_widget(Window *window) {
+	if (window->widget_count >= window->widget_capacity) {
+		// Reallocate widgets.
+		// Return window->widget_capacity + 1 on `realloc()` failure.
+	}
+	uint16_t previous_count = window->widget_count;
+	++window->widget_count;
+	return previous_count;
 }
 
 Frame Frame_create(Window *window, Alignment_Type horizontal_alignment, Alignment_Type vertical_alignment) {
-	Widget widget = Window_allocate_widget();
-	if (widget == 0) {
+	Widget widget = Window_allocate_widget(window);
+	if (widget > window->widget_capacity) {
 		return widget;
 	}
 	window->widgets[widget] = (Widget_Data){
+		.type = FRAME,
 		.frame = {
 			.horizontal_alignment = horizontal_alignment,
 			.vertical_alignment = vertical_alignment,
+		},
+	};
+	return widget;
+}
+
+Label Label_create(Window *window, const char *text) {
+	Widget widget = Window_allocate_widget(window);
+	if (widget > window->widget_capacity) {
+		return widget;
+	}
+	window->widgets[widget] = (Widget_Data){
+		.type = LABEL,
+		.label = {
+			.text = text
 		},
 	};
 	return widget;

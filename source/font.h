@@ -3,9 +3,11 @@
 
 #include "sprite.h"
 
-#define FONT_SPRITE_WIDTH 8
+#define FONT_SPRITE_WIDTH 7
 
-#define FONT_SPRITE_HEIGHT 8
+#define FONT_SPRITE_HEIGHT 7
+
+#define FONT_PADDING 2
 
 #define FONT_SPRITE_COUNT 94
 

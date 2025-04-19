@@ -22,10 +22,9 @@ int main(void) {
 		Window_destroy(&window);
 		return 1;
 	}
+	Viewport *viewport = Window_get_global_viewport(&window);
 
-	Viewport *global = Window_get_global_viewport(&window);
-	Viewport_draw_text(global, &font, "ABC", COLOR_RED, 100, 100, 2.0f);
-
+	Viewport_draw_text(viewport, &font, " !\"$%&'()*+,-./0123456789:;<=>?@`\nABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`\nabcdefghijklmnopqrstuvwxyz{|}~", COLOR_WHITE, 100, 100, 2.0f);
 	do {
 
 	} while (Window_update(&window));
