@@ -11,7 +11,7 @@ for arg in "$@"; do
 	case $arg in
 		debug) 
 		debug=true
-		flags+=" -O -g3"
+		flags+=" -g3"
 		;;
 		release)
 		release=true

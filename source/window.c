@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include <stdlib.h>
+#include <math.h>
 #include "MiniFB.h"
 #include "window.h"
 #include "vector.h"
@@ -19,7 +20,8 @@ Window Window_create(const char *name, Vector2 size) {
 		.global_viewport = {
 			.size = size,
 			// TODO: Allow changing the size of the framebuffer.
-			.frame_buffer = calloc(MAX_WIDTH*MAX_HEIGHT, sizeof *window.global_viewport.frame_buffer),
+			// .frame_buffer = calloc(MAX_WIDTH*MAX_HEIGHT, sizeof *window.global_viewport.frame_buffer),
+			.frame_buffer = calloc(size.x*size.y, sizeof *window.global_viewport.frame_buffer),
 		},
 		.mfb_window = mfb_open_ex(name, size.x, size.y, WF_RESIZABLE),
 	};
@@ -51,10 +53,13 @@ Viewport *Window_get_global_viewport(Window *window) {
 }
 
 bool Window_update(Window *window) {
-	mfb_update_state state = mfb_update(window->mfb_window, (uint32_t*)window->global_viewport.frame_buffer);
-	if (state != STATE_OK || !mfb_wait_sync(window->mfb_window)) {
+	if (!mfb_wait_sync(window->mfb_window)) {
 		return false;
 	}
+	// mfb_update_state state = mfb_update(window->mfb_window, (uint32_t*)window->global_viewport.frame_buffer);
+	// if (state != STATE_OK) {
+	// 	return false;
+	// }
 	window->global_viewport.size.x = mfb_get_window_width(window->mfb_window);
 	window->global_viewport.size.y = mfb_get_window_height(window->mfb_window);
 	return true;
@@ -112,11 +117,20 @@ void Viewport_draw_rectangle_filled(Viewport *viewport, Color color, Vector2 pos
 }
 
 void Viewport_draw_sprite(Viewport *viewport, Sprite *sprite, Vector2 position, Vector2 size, Vector3 angle) {
-	for (uint16_t offset_y = 0; offset_y < size.y; ++offset_y) {
-		for (uint16_t offset_x = 0; size.x; ++offset_x) {
+	float angle_divisions = 180.0f;
+	float rotation_scale_x = cosf(M_PI/angle_divisions*(float)angle.x);
+	float scale_x = rotation_scale_x*(float)size.x/(float)sprite->size.x;
+	float scale_y = (float)size.y/(float)sprite->size.y;
+	printf("scale x = %f, scale y = %f\n", scale_x, scale_y);
+	ssize_t adjusted_size_x = fabsf(rotation_scale_x*size.x);
+	for (ssize_t offset_y = 0; offset_y < size.y; ++offset_y) {
+		for (ssize_t offset_x = 0; offset_x < adjusted_size_x; ++offset_x) {
 			// Use nearest-neighbor scaling to render the bitmap.
-			// Viewport_draw_pixel(viewport, sprite->bitmap[(uint32_t)(offset_y/scale)*sprite->width + (uint32_t)(offset_x/scale)], x + offset_x, y + offset_y);
-			Viewport_draw_pixel(viewport, sprite->bitmap[offset_y/sprite->size.y*sprite->size.x + offset_x/sprite->size.x], (Vector2){position.x + offset_x, position.y + offset_y});
+			ssize_t pixel_index = (ssize_t)(offset_y/scale_y)*sprite->size.x + (ssize_t)(offset_x/scale_x);
+			if (pixel_index < 0) {
+				pixel_index = (ssize_t)(offset_y/scale_y)*sprite->size.x + (ssize_t)((float)adjusted_size_x - (float)offset_x/scale_x);
+			}
+			Viewport_draw_pixel(viewport, sprite->bitmap[pixel_index], (Vector2){position.x + offset_x, position.y + offset_y});
 		}
 	}
 }
@@ -147,7 +161,7 @@ void Viewport_draw_sprite(Viewport *viewport, Sprite *sprite, Vector2 position, 
 // }
 
 void Viewport_fill(Viewport *viewport, Color color) {
-	for (uint16_t i = 0; i < viewport->size.x*viewport->size.y; ++i) {
+	for (size_t i = 0; i < viewport->size.x*viewport->size.y; ++i) {
 		viewport->frame_buffer[i] = color;
 	}
 }

@@ -10,7 +10,7 @@
 typedef struct Viewport {
 	Vector2 position;
 	Vector2 size;
-	Color *frame_buffer;
+	volatile Color *frame_buffer;
 } Viewport;
 
 typedef struct Window {

@@ -1,5 +1,7 @@
 #include <assert.h>
 #include <stdio.h>
+#include <unistd.h>
+#include "MiniFB.h"
 
 #include <stdint.h>
 #include <stdlib.h>
@@ -10,6 +12,7 @@
 #include "entity.h"
 
 int main(void) {
+	mfb_set_target_fps(60);
 	Window window = Window_create("window", (Vector2){800, 600});
 	if (!Window_is_valid(&window)) {
 		fprintf(stderr, "Couldn't open window. Exiting.\n");
@@ -21,12 +24,16 @@ int main(void) {
 		Window_destroy(&window);
 		return 1;
 	}
+	Sprite sprite = Sprite_read_from_path("mario.bmp");
 	Viewport *viewport = Window_get_global_viewport(&window);
 
-	Viewport_draw_line(viewport, red, (Vector2){100, 100}, (Vector2){200, 200});
+	uint16_t size = 0;
 	do {
-
-	} while (Window_update(&window));
+		// Viewport_fill(viewport, black);
+		Viewport_draw_sprite(viewport, &sprite, (Vector2){100, 100}, (Vector2){size, size}, (Vector3){0, 0, 0});
+		size = (size + 1)%100;
+		printf("update = %d\n", mfb_update_ex(window.mfb_window, window.global_viewport.frame_buffer, 800, 600));
+	} while (mfb_wait_sync(window.mfb_window));
 
 	Window_destroy(&window);
 	return 0;
