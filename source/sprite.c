@@ -5,7 +5,20 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "sprite.h"
+#include "vector.h"
 #include "color.h"
+
+// TODO: This needs to be imported from gimp as an array or read from a file.
+Color default_font_bitmap[FONT_SPRITE_COUNT*FONT_SPRITE_WIDTH*FONT_SPRITE_HEIGHT];
+
+Font default_font = {
+	.atlas = {
+		.bitmap = default_font_bitmap,
+		.sprite_size = (Vector2){FONT_SPRITE_WIDTH, FONT_SPRITE_HEIGHT},
+		.sprite_count = FONT_SPRITE_COUNT,
+	},
+	.padding = (Vector2){FONT_PADDING, FONT_PADDING},
+};
 
 Bmp_Header Bmp_Header_read_from_file(FILE *file) {
 	// Skip the signature.
@@ -26,23 +39,6 @@ bool Bmp_Header_is_valid(Bmp_Header *header) {
 	return header->width != 0;
 }
 
-void Sprite_copy(Sprite *source, Sprite *destination) {
-	assert(source->width <= destination->width && source->height <= destination->height && "Cannot copy to a smaller sprite.");
-	for (uint32_t i = 0; i < source->width*source->height; ++i) {
-		destination->bitmap[i] = source->bitmap[i];
-	}
-	destination->width = source->width;
-	destination->height = source->height;
-}
-
-void Sprite_apply_color(Sprite *sprite, uint32_t color) {
-	for (uint32_t i = 0; i < sprite->width*sprite->height; ++i) {
-		if (A(sprite->bitmap[i])) {
-			sprite->bitmap[i] = color;
-		}
-	}
-}
-
 Sprite Sprite_read_from_file(FILE *file) {
 	Bmp_Header header = Bmp_Header_read_from_file(file);
 	if (!Bmp_Header_is_valid(&header)) {
@@ -51,8 +47,7 @@ Sprite Sprite_read_from_file(FILE *file) {
 	fseek(file, header.data_offset, SEEK_SET);
 	
 	Sprite sprite = {
-		.width = header.width,
-		.height = header.height,
+		.size = (Vector2){header.width, header.height},
 		.bitmap = malloc(header.width*header.height*sizeof *sprite.bitmap),
 	};
 	if (!sprite.bitmap) {
@@ -61,8 +56,8 @@ Sprite Sprite_read_from_file(FILE *file) {
 	
 	// Read the rows from the file starting at the last row.
 	int32_t row = 0;
-	for (row = sprite.height - 1; row >= 0; --row) {
-		if (fread(sprite.bitmap + row*sprite.width, sizeof *sprite.bitmap, sprite.width, file) != (size_t)sprite.width) {
+	for (row = sprite.size.y - 1; row >= 0; --row) {
+		if (fread(sprite.bitmap + row*sprite.size.y, sizeof *sprite.bitmap, sprite.size.x, file) != (size_t)sprite.size.x) {
 			free(sprite.bitmap);
 			return (Sprite){0};
 		}
@@ -78,29 +73,71 @@ Sprite Sprite_read_from_path(const char *path) {
 	return Sprite_read_from_file(file);
 }
 
-bool Sprite_is_valid(Sprite *sprite) {
-	return sprite->bitmap != NULL;
-}
-
 void Sprite_destroy(Sprite *sprite) {
 	free(sprite->bitmap);
 	*sprite = (Sprite){0};
 }
 
-Sprite Atlas_get_sprite(Atlas *atlas, uint16_t sprite_height, uint16_t sprite_index) {
-	assert(sprite_index < atlas->height/sprite_height && "Sprite index out of bounds.");
+bool Sprite_is_valid(Sprite *sprite) {
+	return sprite->bitmap != NULL;
+}
+
+void Atlas_destroy(Atlas *atlas) {
+	free(atlas->bitmap);
+	*atlas = (Atlas){0};
+}
+
+bool Atlas_is_valid(Atlas *atlas) {
+	return atlas->bitmap != NULL;
+}
+
+Sprite Atlas_get_sprite(Atlas *atlas, uint16_t sprite_index) {
+	assert(sprite_index < atlas->sprite_count && "Sprite index out of bounds.");
 	return (Sprite){
-		.width = atlas->width,
-		.height = sprite_height,
-		.bitmap = atlas->bitmap + sprite_index*sprite_height*atlas->width,
+		.size = atlas->sprite_size,
+		.bitmap = atlas->bitmap + sprite_index*atlas->sprite_size.y*atlas->sprite_size.x,
 	};
 }
 
-Atlas Atlas_get_subatlas(Atlas *atlas, uint16_t subatlas_height, uint16_t subatlas_index) {
-	assert(subatlas_index < atlas->height/subatlas_height && "Subatlas index out of bounds.");
-	return (Atlas){
-		.width = atlas->width,
-		.height = subatlas_height,
-		.bitmap = atlas->bitmap + subatlas_index*subatlas_height*atlas->width,
+Font Font_read_from_file(FILE *file) {
+	Sprite sprite = Sprite_read_from_file(file);
+	if (!Sprite_is_valid(&sprite)) {
+		return (Font){0};
+	}
+	return (Font){
+		.atlas = {
+			.bitmap = sprite.bitmap,
+			.sprite_count = FONT_SPRITE_COUNT,
+			.sprite_size = (Vector2){FONT_SPRITE_WIDTH, FONT_SPRITE_HEIGHT},
+		},
+		.padding = (Vector2){FONT_PADDING, FONT_PADDING},
 	};
+}
+
+Font Font_read_from_path(const char *path) {
+	Sprite sprite = Sprite_read_from_path(path);
+	if (!Sprite_is_valid(&sprite)) {
+		return (Font){0};
+	}
+	return (Font){
+		.atlas = {
+			.bitmap = sprite.bitmap,
+			.sprite_count = FONT_SPRITE_COUNT,
+			.sprite_size = (Vector2){FONT_SPRITE_WIDTH, FONT_SPRITE_HEIGHT},
+		},
+		.padding = (Vector2){FONT_PADDING, FONT_PADDING},
+	};
+}
+
+void Font_destroy(Font *font) {
+	Atlas_destroy(&font->atlas);
+
+}
+
+bool Font_is_valid(Font *font) {
+	return Atlas_is_valid(&font->atlas);
+}
+
+Sprite Font_get_character_sprite(Font *font, char ch) {
+	return Atlas_get_sprite((Atlas*)font, (uint16_t)ch - 32);
 }
