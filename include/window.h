@@ -6,7 +6,6 @@
 #include "vector.h"
 #include "color.h"
 #include "sprite.h"
-#include "font.h"
 
 typedef struct Viewport {
 	Vector2 position;

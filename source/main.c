@@ -6,7 +6,6 @@
 #include "vector.h"
 #include "color.h"
 #include "sprite.h"
-#include "font.h"
 #include "window.h"
 #include "entity.h"
 
@@ -23,8 +22,6 @@ int main(void) {
 		return 1;
 	}
 	Viewport *viewport = Window_get_global_viewport(&window);
-
-	printf("size = %zu\n", sizeof (Entity));
 
 	Viewport_draw_line(viewport, red, (Vector2){100, 100}, (Vector2){200, 200});
 	do {

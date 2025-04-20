@@ -8,7 +8,6 @@
 #include "vector.h"
 #include "color.h"
 #include "sprite.h"
-#include "font.h"
 
 #define MAX_WIDTH 1920
 
