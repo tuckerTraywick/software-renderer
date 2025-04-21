@@ -41,7 +41,7 @@ void Viewport_draw_rectangle_filled(Viewport *viewport, Color color, Vector2 pos
 
 void Viewport_draw_sprite(Viewport *viewport, Sprite *sprite, Vector2 position, Vector2 size, Vector3 angle);
 
-// void Viewport_draw_text(Viewport *viewport, Font *font, const char *text, Color color, Vector2 position, Vector2 size, Vector3 angle);
+void Viewport_draw_text(Viewport *viewport, Font *font, const char *text, Color color, Vector2 position, Vector2 size, Vector3 angle);
 
 void Viewport_fill(Viewport *viewport, Color color);
 

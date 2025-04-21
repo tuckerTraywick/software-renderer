@@ -30,7 +30,7 @@ Window Window_create(const char *name, Vector2 size) {
 		mfb_close(window.mfb_window);
 	}
 	if (window.global_viewport.frame_buffer && !window.mfb_window) {
-		free(window.global_viewport.frame_buffer);
+		free((void*)window.global_viewport.frame_buffer);
 	}
 	return window;
 }
@@ -40,7 +40,7 @@ bool Window_is_valid(Window *window) {
 }
 
 void Window_destroy(Window *window) {
-	free(window->global_viewport.frame_buffer);
+	free((void*)window->global_viewport.frame_buffer);
 	mfb_close(window->mfb_window);
 	*window = (Window){0};
 }
@@ -118,16 +118,24 @@ void Viewport_draw_rectangle_filled(Viewport *viewport, Color color, Vector2 pos
 }
 
 void Viewport_draw_sprite(Viewport *viewport, Sprite *sprite, Vector2 position, Vector2 size, Vector3 angle) {
-	float angle_divisions = 360.0f;
-	float rotation_scale_x = cosf(2.0f*M_PI/angle_divisions*(float)angle.x);
+	float angle_radians_x = M_PI/180.0f*(float)angle.x;
+	float angle_radians_y = M_PI/180.0f*(float)angle.y;
+	float angle_radians_z = M_PI/180.0f*(float)angle.z;
+	float rotation_scale_x = cosf(angle_radians_y);
+	float rotation_scale_y = cosf(angle_radians_x);
 	float scale_x = rotation_scale_x*(float)size.x/(float)sprite->size.x;
-	float scale_y = (float)size.y/(float)sprite->size.y;
+	float scale_y = rotation_scale_y*(float)size.y/(float)sprite->size.y;
 	ssize_t adjusted_size_x = fabsf(rotation_scale_x*size.x);
+	ssize_t adjusted_size_y = fabsf(rotation_scale_y*size.y);
 	position.x -= 0.5f*adjusted_size_x;
-	for (ssize_t offset_y = 0; offset_y < size.y; ++offset_y) {
+	position.y -= 0.5f*adjusted_size_y;
+	for (ssize_t offset_y = 0; offset_y < adjusted_size_y; ++offset_y) {
 		for (ssize_t offset_x = 0; offset_x < adjusted_size_x; ++offset_x) {
 			// Use nearest-neighbor scaling to render the bitmap.
 			ssize_t pixel_index = (ssize_t)(offset_y/scale_y)*sprite->size.x + (ssize_t)(offset_x/scale_x);
+			if (pixel_index < 0) {
+				pixel_index = sprite->size.x*sprite->size.y + pixel_index;
+			}
 			Viewport_draw_pixel(viewport, sprite->bitmap[pixel_index], (Vector2){position.x + offset_x, position.y + offset_y});
 		}
 	}
