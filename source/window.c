@@ -27,33 +27,22 @@ void Viewport_draw_pixel3(Viewport *viewport, Camera *camera, Color color, Vecto
 }
 
 void Viewport_draw_line(Viewport *viewport, Color color, Vector2 start, Vector2 end) {
-	// Make sure the coordinates are ordered least to greatest.
-	if (start.x > end.x) {
-		float temp = start.x;
-		start.x = end.x;
-		end.x = temp;
-	}
-	if (start.y > end.y) {
-		float temp = start.y;
-		start.y = end.y;
-		end.y = temp;
-	}
-	const float delta_x = (float)end.x - (float)start.x;
-	const float delta_y = (float)end.y - (float)start.y;
-	float x = (float)start.x;
-	float y = (float)start.y;
+	const float delta_x = end.x - start.x;
+	const float delta_y = end.y - start.y;
+	float x = start.x;
+	float y = start.y;
 	// Draw the line using the DDA algorithm.
-	if (delta_x >= delta_y) {
-		while (x < (float)end.x) {
+	if (fabs(delta_x) >= fabs(delta_y)) {
+		while (fabs(x - end.x) > 1.0f) {
 			Viewport_draw_pixel(viewport, color, (Vector2){x, y});
-			x += 1.0f;
-			y += delta_y/delta_x;
+			x += (delta_x >= 0.0f) ? 1.0f : -1.0f;
+			y += delta_y/fabs(delta_x);
 		}
 	} else {
-		while (y < (float)end.y) {
+		while (fabs(y - end.y) > 1.0f) {
 			Viewport_draw_pixel(viewport, color, (Vector2){x, y});
-			x += delta_x/delta_y;
-			y += 1.0f;
+			x += delta_x/fabs(delta_y);
+			y += (delta_y >= 0.0f) ? 1.0f : -1.0f;
 		}
 	}
 }
@@ -181,22 +170,33 @@ bool Window_update(Window *window) {
 }
 
 Vector2 Camera_get_projection(Camera *camera, Vector3 point) {
-	// Translate.
+	// Translate and scale.
+	float z = (fabs(point.z - camera->position.z) <= 1.0f) ? 1.0f : point.z - camera->position.z;
 	Vector3 screen_coordinates = {
-		point.x - camera->position.x,
-		point.y - camera->position.y,
-		point.z - camera->position.z,
+		(point.x - camera->position.x)/z,
+		(point.y - camera->position.y)/z,
+		z,
 	};
 	// Rotate around the x axis.
 	screen_coordinates = (Vector3){
 		screen_coordinates.x,
-		screen_coordinates.y*cosf(-camera->angle.x) - screen_coordinates.z*sinf(-camera->angle.x),
-		screen_coordinates.y*sinf(-camera->angle.x) + screen_coordinates.z*cosf(-camera->angle.x),
+		screen_coordinates.y*cosf(camera->angle.x) - screen_coordinates.z*sinf(camera->angle.x),
+		screen_coordinates.y*sinf(camera->angle.x) + screen_coordinates.z*cosf(camera->angle.x),
 	};
-	// Apply perspective scaling.
+	// Rotate around the y axis.
+	screen_coordinates = (Vector3){
+		screen_coordinates.x*cosf(camera->angle.y) + screen_coordinates.z*sinf(camera->angle.y),
+		screen_coordinates.y,
+		-screen_coordinates.x*sinf(camera->angle.y) + screen_coordinates.z*cosf(camera->angle.y),
+	};
+	// Rotate around the z axis.
+	screen_coordinates = (Vector3){
+		screen_coordinates.x*cosf(camera->angle.z) - screen_coordinates.y*sinf(camera->angle.z),
+		screen_coordinates.x*sinf(camera->angle.z) + screen_coordinates.y*cosf(camera->angle.z),
+	};
 	return (Vector2){
-		screen_coordinates.x/screen_coordinates.z,
-		screen_coordinates.y/screen_coordinates.z,
+		screen_coordinates.x,
+		screen_coordinates.y,
 	};
 }
 
