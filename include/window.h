@@ -39,7 +39,9 @@ void Viewport_draw_rectangle(Viewport *viewport, Color color, Vector2 position, 
 
 void Viewport_draw_rectangle_filled(Viewport *viewport, Color color, Vector2 position, Vector2 size);
 
-void Viewport_draw_sprite(Viewport *viewport, Sprite *sprite, Vector2 position, Vector2 size, Vector3 angle);
+void Viewport_draw_sprite(Viewport *viewport, Sprite *sprite, Vector2 position, Vector2 size, uint16_t angle);
+
+void Viewport_draw_sprite3(Viewport *viewport, Sprite *sprite, Vector2 position, Vector2 size, Vector3 angle, Vector3 camera_angle);
 
 void Viewport_draw_text(Viewport *viewport, Font *font, const char *text, Color color, Vector2 position, Vector2 size, Vector3 angle);
 

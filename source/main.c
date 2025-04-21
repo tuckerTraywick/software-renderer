@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <math.h>
 #include "MiniFB.h"
+#include "MiniFB_enums.h"
 
 #include <stdint.h>
 #include <stdlib.h>
@@ -33,19 +34,20 @@ int main(void) {
 	}
 	Viewport *viewport = Window_get_global_viewport(&window);
 
-	Vector2 player_position = (Vector2){0, 0};
-	Vector2 sprite_position = (Vector2){100, 50};
-	Vector3 sprite_angle = (Vector3){
-		.y = 180.0f/M_PI*atanf((float)(sprite_position.x - player_position.x)/(float)(sprite_position.y - player_position.y))
-	};
-	printf("y = %d\n", sprite_angle.y);
-	uint16_t angle = 0;
 	do {
 		Viewport_fill(viewport, black);
-		Viewport_draw_sprite(viewport, &sprite, (Vector2){400, 300}, (Vector2){100, 100}, sprite_angle);
+		Viewport_draw_sprite(viewport, &sprite, (Vector2){400, 300}, (Vector2){100, 100}, 0);
 		Viewport_draw_line(viewport, red, (Vector2){400, 0}, (Vector2){400, 600});
 		Viewport_draw_line(viewport, red, (Vector2){0, 300}, (Vector2){800, 300});
-		angle = (angle + 1)%360;
+
+		// uint8_t *keys = mfb_get_key_buffer(window.mfb_window);
+		// if (keys[KB_KEY_D]) {
+		// 	player_position.x += 1;
+		// 	printf("x = %u\n", player_position.x);
+		// } else if (keys[KB_KEY_A]) {
+		// 	player_position.x -= 1;
+		// 	printf("x = %u\n", player_position.x);
+		// }
 	} while (Window_update(&window));
 
 	Window_destroy(&window);

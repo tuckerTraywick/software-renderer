@@ -117,20 +117,14 @@ void Viewport_draw_rectangle_filled(Viewport *viewport, Color color, Vector2 pos
 	}
 }
 
-void Viewport_draw_sprite(Viewport *viewport, Sprite *sprite, Vector2 position, Vector2 size, Vector3 angle) {
-	float angle_radians_x = M_PI/180.0f*(float)angle.x;
-	float angle_radians_y = M_PI/180.0f*(float)angle.y;
-	float angle_radians_z = M_PI/180.0f*(float)angle.z;
-	float rotation_scale_x = cosf(angle_radians_y);
-	float rotation_scale_y = cosf(angle_radians_x);
-	float scale_x = rotation_scale_x*(float)size.x/(float)sprite->size.x;
-	float scale_y = rotation_scale_y*(float)size.y/(float)sprite->size.y;
-	ssize_t adjusted_size_x = fabsf(rotation_scale_x*size.x);
-	ssize_t adjusted_size_y = fabsf(rotation_scale_y*size.y);
-	position.x -= 0.5f*adjusted_size_x;
-	position.y -= 0.5f*adjusted_size_y;
-	for (ssize_t offset_y = 0; offset_y < adjusted_size_y; ++offset_y) {
-		for (ssize_t offset_x = 0; offset_x < adjusted_size_x; ++offset_x) {
+void Viewport_draw_sprite(Viewport *viewport, Sprite *sprite, Vector2 position, Vector2 size, uint16_t angle) {
+	float angle_radians_x = M_PI/180.0f*(float)angle;
+	float scale_x = (float)size.x/(float)sprite->size.x;
+	float scale_y = (float)size.y/(float)sprite->size.y;
+	position.x -= 0.5f*size.x;
+	position.y -= 0.5f*size.y;
+	for (ssize_t offset_y = 0; offset_y < size.y; ++offset_y) {
+		for (ssize_t offset_x = 0; offset_x < size.x; ++offset_x) {
 			// Use nearest-neighbor scaling to render the bitmap.
 			ssize_t pixel_index = (ssize_t)(offset_y/scale_y)*sprite->size.x + (ssize_t)(offset_x/scale_x);
 			if (pixel_index < 0) {
@@ -139,6 +133,10 @@ void Viewport_draw_sprite(Viewport *viewport, Sprite *sprite, Vector2 position, 
 			Viewport_draw_pixel(viewport, sprite->bitmap[pixel_index], (Vector2){position.x + offset_x, position.y + offset_y});
 		}
 	}
+}
+
+void Viewport_draw_sprite3(Viewport *viewport, Sprite *sprite, Vector2 position, Vector2 size, Vector3 angle, Vector3 camera_angle) {
+
 }
 
 // void Viewport_draw_text(Viewport *viewport, Font *font, const char *text, uint32_t color, uint16_t x, uint16_t y, float scale) {
