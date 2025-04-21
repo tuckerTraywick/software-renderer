@@ -32,23 +32,13 @@ int main(void) {
 		Window_destroy(&window);
 		return 1;
 	}
-	
+
 	Viewport *viewport = Window_get_global_viewport(&window);
 	Camera camera = {0};
 	do {
 		Viewport_fill(viewport, black);
-		Viewport_draw_sprite(viewport, &sprite, (Vector2){400, 300}, (Vector2){100, 100}, 0);
-		Viewport_draw_line(viewport, red, (Vector2){400, 0}, (Vector2){400, 600});
-		Viewport_draw_line(viewport, red, (Vector2){0, 300}, (Vector2){800, 300});
-
-		// uint8_t *keys = mfb_get_key_buffer(window.mfb_window);
-		// if (keys[KB_KEY_D]) {
-		// 	player_position.x += 1;
-		// 	printf("x = %u\n", player_position.x);
-		// } else if (keys[KB_KEY_A]) {
-		// 	player_position.x -= 1;
-		// 	printf("x = %u\n", player_position.x);
-		// }
+		Viewport_draw_line(viewport, red, (Vector2){-400, 0}, (Vector2){400, 0});
+		Viewport_draw_line(viewport, red, (Vector2){0, -300}, (Vector2){0, 300});
 	} while (Window_update(&window));
 
 	Window_destroy(&window);

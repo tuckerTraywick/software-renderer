@@ -82,6 +82,13 @@ bool Sprite_is_valid(Sprite *sprite) {
 	return sprite->bitmap != NULL;
 }
 
+Color Sprite_get_pixel(Sprite *sprite, Vector2 position) {
+	int32_t x = sprite->size.x/2 + position.x;
+	int32_t y = sprite->size.y/2 - position.y;
+	assert(x >= 0 && y >= 0 && "Invalid coordinate.");
+	return sprite->bitmap[y*sprite->size.x + x];
+}
+
 void Atlas_destroy(Atlas *atlas) {
 	free(atlas->bitmap);
 	*atlas = (Atlas){0};

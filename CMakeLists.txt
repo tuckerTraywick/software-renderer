@@ -10,7 +10,6 @@ add_executable(run
 	source/entity.c
 	source/main.c
 	source/sprite.c
-	source/vector.c
 	source/window.c
 )
 target_include_directories(run PUBLIC include)

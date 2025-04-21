@@ -69,6 +69,8 @@ void Sprite_destroy(Sprite *sprite);
 
 bool Sprite_is_valid(Sprite *sprite);
 
+Color Sprite_get_pixel(Sprite *sprite, Vector2 position);
+
 // Copies the dimensions and the bitmap's content from `source` to `destination`.
 // void Sprite_copy(Sprite *source, Sprite *destination);
 
