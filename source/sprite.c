@@ -14,10 +14,10 @@ Color default_font_bitmap[FONT_SPRITE_COUNT*FONT_SPRITE_WIDTH*FONT_SPRITE_HEIGHT
 Font default_font = {
 	.atlas = {
 		.bitmap = default_font_bitmap,
-		.sprite_size = (Vector2){FONT_SPRITE_WIDTH, FONT_SPRITE_HEIGHT},
+		.sprite_size = {FONT_SPRITE_WIDTH, FONT_SPRITE_HEIGHT},
 		.sprite_count = FONT_SPRITE_COUNT,
 	},
-	.padding = (Vector2){FONT_PADDING, FONT_PADDING},
+	.padding = {FONT_PADDING, FONT_PADDING},
 };
 
 Bmp_Header Bmp_Header_read_from_file(FILE *file) {

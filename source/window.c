@@ -20,8 +20,8 @@ Window Window_create(const char *name, Vector2 size) {
 		.global_viewport = {
 			.size = size,
 			// TODO: Allow changing the size of the framebuffer.
-			// .frame_buffer = calloc(MAX_WIDTH*MAX_HEIGHT, sizeof *window.global_viewport.frame_buffer),
-			.frame_buffer = calloc(size.x*size.y, sizeof *window.global_viewport.frame_buffer),
+			.frame_buffer = calloc(MAX_WIDTH*MAX_HEIGHT, sizeof *window.global_viewport.frame_buffer),
+			// .frame_buffer = calloc(size.x*size.y, sizeof *window.global_viewport.frame_buffer),
 		},
 		.mfb_window = mfb_open_ex(name, size.x, size.y, WF_RESIZABLE),
 	};

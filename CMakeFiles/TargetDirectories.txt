@@ -1,0 +1,3 @@
+/home/tucker/Code/software-renderer/CMakeFiles/run.dir
+/home/tucker/Code/software-renderer/CMakeFiles/edit_cache.dir
+/home/tucker/Code/software-renderer/CMakeFiles/rebuild_cache.dir
