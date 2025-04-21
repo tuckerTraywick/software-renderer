@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <math.h>
 
 #include <stdint.h>
 #include <stdbool.h>
@@ -83,8 +84,8 @@ bool Sprite_is_valid(Sprite *sprite) {
 }
 
 Color Sprite_get_pixel(Sprite *sprite, Vector2 position) {
-	float x = sprite->size.x*0.5 + position.x;
-	float y = sprite->size.y*0.5 - position.y;
+	float x = roundf(sprite->size.x*0.5 + position.x);
+	float y = roundf(sprite->size.y*0.5 - position.y);
 	assert(x >= 0.0f && y >= 0.0f && "Invalid coordinate.");
 	return sprite->bitmap[(size_t)(y*sprite->size.x + x)];
 }

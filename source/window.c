@@ -16,8 +16,8 @@
 #define MAX_HEIGHT 1080
 
 void Viewport_draw_pixel(Viewport *viewport, Color color, Vector2 position) {
-	float x = viewport->size.x/2 + position.x;
-	float y = viewport->size.y/2 - position.y;
+	float x = roundf(viewport->size.x*0.5f + position.x);
+	float y = roundf(viewport->size.y*0.5f - position.y);
 	assert(x >= 0.0f && y >= 0.0f && "Invalid coordinate.");
 	viewport->frame_buffer[(size_t)(y*viewport->size.x + x)] = color;
 }
@@ -83,20 +83,20 @@ void Viewport_draw_rectangle_filled(Viewport *viewport, Color color, Vector2 pos
 	}
 }
 
-// void Viewport_draw_sprite(Viewport *viewport, Sprite *sprite, Vector2 position, Vector2 size, uint16_t angle) {
-// 	float angle_radians_x = M_PI/180.0f*(float)angle;
-// 	float scale_x = (float)size.x/(float)sprite->size.x;
-// 	float scale_y = (float)size.y/(float)sprite->size.y;
-// 	// position.x -= 0.5f*size.x;
-// 	// position.y -= 0.5f*size.y;
-// 	for (ssize_t offset_y = -size.y/2; offset_y < size.y/2; ++offset_y) {
-// 		for (ssize_t offset_x = -size.x/2; offset_x < size.x/2; ++offset_x) {
-// 			// Use nearest-neighbor scaling to render the bitmap.
-// 			ssize_t pixel_index = (ssize_t)(offset_y/scale_y)*sprite->size.x + (ssize_t)(offset_x/scale_x);
-// 			Viewport_draw_pixel(viewport, sprite->bitmap[pixel_index], (Vector2){position.x + offset_x, position.y + offset_y});
-// 		}
-// 	}
-// }
+void Viewport_draw_sprite(Viewport *viewport, Sprite *sprite, Vector2 position, Vector2 size, float angle) {
+	float scale_x = (float)size.x/(float)sprite->size.x;
+	float scale_y = (float)size.y/(float)sprite->size.y;
+	for (float offset_y = -size.y*0.5f; offset_y < size.y*0.5f; offset_y += 1.0f) {
+		for (float offset_x = -size.x*0.5f; offset_x < size.x*0.5f; offset_x += 1.0f) {
+			// Use nearest-neighbor scaling to render the bitmap.
+			Vector2 sprite_position = (Vector2){
+				offset_x/scale_x,
+				offset_y/scale_y,
+			};
+			Viewport_draw_pixel(viewport, Sprite_get_pixel(sprite, sprite_position), (Vector2){position.x + offset_x, position.y + offset_y});
+		}
+	}
+}
 
 // void Viewport_draw_text(Viewport *viewport, Font *font, const char *text, ufloat color, uint16_t x, uint16_t y, float scale) {
 // 	ufloat character_x = x;
@@ -181,11 +181,23 @@ bool Window_update(Window *window) {
 }
 
 Vector2 Camera_get_projection(Camera *camera, Vector3 point) {
-	Vector2 screen_coordinates = {
-		(point.x - camera->position.x)/(point.z - camera->position.z),
-		(point.y - camera->position.y)/(point.z - camera->position.z),
+	// Translate.
+	Vector3 screen_coordinates = {
+		point.x - camera->position.x,
+		point.y - camera->position.y,
+		point.z - camera->position.z,
 	};
-	return screen_coordinates;
+	// Rotate around the x axis.
+	screen_coordinates = (Vector3){
+		screen_coordinates.x,
+		screen_coordinates.y*cosf(-camera->angle.x) - screen_coordinates.z*sinf(-camera->angle.x),
+		screen_coordinates.y*sinf(-camera->angle.x) + screen_coordinates.z*cosf(-camera->angle.x),
+	};
+	// Apply perspective scaling.
+	return (Vector2){
+		screen_coordinates.x/screen_coordinates.z,
+		screen_coordinates.y/screen_coordinates.z,
+	};
 }
 
 #undef MAX_WIDTH
