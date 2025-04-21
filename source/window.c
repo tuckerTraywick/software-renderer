@@ -135,10 +135,6 @@ void Viewport_draw_sprite(Viewport *viewport, Sprite *sprite, Vector2 position, 
 	}
 }
 
-void Viewport_draw_sprite3(Viewport *viewport, Sprite *sprite, Vector2 position, Vector2 size, Vector3 angle, Vector3 camera_angle) {
-
-}
-
 // void Viewport_draw_text(Viewport *viewport, Font *font, const char *text, uint32_t color, uint16_t x, uint16_t y, float scale) {
 // 	uint32_t character_x = x;
 // 	uint32_t character_y = y;

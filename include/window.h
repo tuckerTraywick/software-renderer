@@ -7,6 +7,12 @@
 #include "color.h"
 #include "sprite.h"
 
+typedef struct Camera {
+	Vector3 position;
+	Vector3 angle;
+	Vector2 fov;
+} Camera;
+
 typedef struct Viewport {
 	Vector2 position;
 	Vector2 size;
@@ -33,17 +39,27 @@ bool Window_update(Window *window);
 
 void Viewport_draw_pixel(Viewport *viewport, Color color, Vector2 position);
 
+void Viewport_draw_pixel3(Viewport *viewport, Camera *camera, Color color, Vector3 position);
+
 void Viewport_draw_line(Viewport *viewport, Color color, Vector2 start, Vector2 end);
+
+void Viewport_draw_line3(Viewport *viewport, Camera *camera, Color color, Vector3 start, Vector3 end);
 
 void Viewport_draw_rectangle(Viewport *viewport, Color color, Vector2 position, Vector2 size);
 
+void Viewport_draw_rectangle3(Viewport *viewport, Camera *camera, Color color, Vector3 position, Vector3 size, Vector3 angle);
+
 void Viewport_draw_rectangle_filled(Viewport *viewport, Color color, Vector2 position, Vector2 size);
+
+void Viewport_draw_rectangle_filled3(Viewport *viewport, Camera *camera, Color color, Vector3 position, Vector3 size, Vector3 angle);
 
 void Viewport_draw_sprite(Viewport *viewport, Sprite *sprite, Vector2 position, Vector2 size, uint16_t angle);
 
-void Viewport_draw_sprite3(Viewport *viewport, Sprite *sprite, Vector2 position, Vector2 size, Vector3 angle, Vector3 camera_angle);
+void Viewport_draw_sprite3(Viewport *viewport, Camera *camera, Sprite *sprite, Vector3 position, Vector3 size, Vector3 angle);
 
-void Viewport_draw_text(Viewport *viewport, Font *font, const char *text, Color color, Vector2 position, Vector2 size, Vector3 angle);
+void Viewport_draw_text(Viewport *viewport, Font *font, uint16_t font_size, Color color, const char *text, Vector2 position, uint16_t angle);
+
+void Viewport_draw_text3(Viewport *viewport, Camera *camera, Font *font, uint16_t font_size, Color color, const char *text, Vector3 position, Vector3 angle);
 
 void Viewport_fill(Viewport *viewport, Color color);
 

@@ -32,8 +32,9 @@ int main(void) {
 		Window_destroy(&window);
 		return 1;
 	}
+	
 	Viewport *viewport = Window_get_global_viewport(&window);
-
+	Camera camera = {0};
 	do {
 		Viewport_fill(viewport, black);
 		Viewport_draw_sprite(viewport, &sprite, (Vector2){400, 300}, (Vector2){100, 100}, 0);
