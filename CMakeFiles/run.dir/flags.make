@@ -4,7 +4,7 @@
 # compile C with /usr/bin/cc
 C_DEFINES = 
 
-C_INCLUDES = 
+C_INCLUDES = -I/home/tucker/Code/software-renderer/include -I/home/tucker/Code/software-renderer/dependencies/minifb/include
 
-C_FLAGS = 
+C_FLAGS = -std=gnu99
 

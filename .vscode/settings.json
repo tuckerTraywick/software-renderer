@@ -6,6 +6,7 @@
 		"minifb_enums.h": "c",
 		"stdlib.h": "c",
 		"color.h": "c",
-		"atlas.h": "c"
+		"atlas.h": "c",
+		"math.h": "c"
 	}
 }

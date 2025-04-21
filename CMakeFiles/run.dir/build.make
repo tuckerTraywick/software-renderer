@@ -69,10 +69,52 @@ include CMakeFiles/run.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/run.dir/flags.make
 
+CMakeFiles/run.dir/source/arena.c.o: CMakeFiles/run.dir/flags.make
+CMakeFiles/run.dir/source/arena.c.o: source/arena.c
+CMakeFiles/run.dir/source/arena.c.o: CMakeFiles/run.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/tucker/Code/software-renderer/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building C object CMakeFiles/run.dir/source/arena.c.o"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/run.dir/source/arena.c.o -MF CMakeFiles/run.dir/source/arena.c.o.d -o CMakeFiles/run.dir/source/arena.c.o -c /home/tucker/Code/software-renderer/source/arena.c
+
+CMakeFiles/run.dir/source/arena.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/run.dir/source/arena.c.i"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/tucker/Code/software-renderer/source/arena.c > CMakeFiles/run.dir/source/arena.c.i
+
+CMakeFiles/run.dir/source/arena.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/run.dir/source/arena.c.s"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/tucker/Code/software-renderer/source/arena.c -o CMakeFiles/run.dir/source/arena.c.s
+
+CMakeFiles/run.dir/source/color.c.o: CMakeFiles/run.dir/flags.make
+CMakeFiles/run.dir/source/color.c.o: source/color.c
+CMakeFiles/run.dir/source/color.c.o: CMakeFiles/run.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/tucker/Code/software-renderer/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building C object CMakeFiles/run.dir/source/color.c.o"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/run.dir/source/color.c.o -MF CMakeFiles/run.dir/source/color.c.o.d -o CMakeFiles/run.dir/source/color.c.o -c /home/tucker/Code/software-renderer/source/color.c
+
+CMakeFiles/run.dir/source/color.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/run.dir/source/color.c.i"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/tucker/Code/software-renderer/source/color.c > CMakeFiles/run.dir/source/color.c.i
+
+CMakeFiles/run.dir/source/color.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/run.dir/source/color.c.s"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/tucker/Code/software-renderer/source/color.c -o CMakeFiles/run.dir/source/color.c.s
+
+CMakeFiles/run.dir/source/entity.c.o: CMakeFiles/run.dir/flags.make
+CMakeFiles/run.dir/source/entity.c.o: source/entity.c
+CMakeFiles/run.dir/source/entity.c.o: CMakeFiles/run.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/tucker/Code/software-renderer/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building C object CMakeFiles/run.dir/source/entity.c.o"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/run.dir/source/entity.c.o -MF CMakeFiles/run.dir/source/entity.c.o.d -o CMakeFiles/run.dir/source/entity.c.o -c /home/tucker/Code/software-renderer/source/entity.c
+
+CMakeFiles/run.dir/source/entity.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/run.dir/source/entity.c.i"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/tucker/Code/software-renderer/source/entity.c > CMakeFiles/run.dir/source/entity.c.i
+
+CMakeFiles/run.dir/source/entity.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/run.dir/source/entity.c.s"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/tucker/Code/software-renderer/source/entity.c -o CMakeFiles/run.dir/source/entity.c.s
+
 CMakeFiles/run.dir/source/main.c.o: CMakeFiles/run.dir/flags.make
 CMakeFiles/run.dir/source/main.c.o: source/main.c
 CMakeFiles/run.dir/source/main.c.o: CMakeFiles/run.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/tucker/Code/software-renderer/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building C object CMakeFiles/run.dir/source/main.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/tucker/Code/software-renderer/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building C object CMakeFiles/run.dir/source/main.c.o"
 	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/run.dir/source/main.c.o -MF CMakeFiles/run.dir/source/main.c.o.d -o CMakeFiles/run.dir/source/main.c.o -c /home/tucker/Code/software-renderer/source/main.c
 
 CMakeFiles/run.dir/source/main.c.i: cmake_force
@@ -83,17 +125,72 @@ CMakeFiles/run.dir/source/main.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/run.dir/source/main.c.s"
 	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/tucker/Code/software-renderer/source/main.c -o CMakeFiles/run.dir/source/main.c.s
 
+CMakeFiles/run.dir/source/sprite.c.o: CMakeFiles/run.dir/flags.make
+CMakeFiles/run.dir/source/sprite.c.o: source/sprite.c
+CMakeFiles/run.dir/source/sprite.c.o: CMakeFiles/run.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/tucker/Code/software-renderer/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building C object CMakeFiles/run.dir/source/sprite.c.o"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/run.dir/source/sprite.c.o -MF CMakeFiles/run.dir/source/sprite.c.o.d -o CMakeFiles/run.dir/source/sprite.c.o -c /home/tucker/Code/software-renderer/source/sprite.c
+
+CMakeFiles/run.dir/source/sprite.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/run.dir/source/sprite.c.i"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/tucker/Code/software-renderer/source/sprite.c > CMakeFiles/run.dir/source/sprite.c.i
+
+CMakeFiles/run.dir/source/sprite.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/run.dir/source/sprite.c.s"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/tucker/Code/software-renderer/source/sprite.c -o CMakeFiles/run.dir/source/sprite.c.s
+
+CMakeFiles/run.dir/source/vector.c.o: CMakeFiles/run.dir/flags.make
+CMakeFiles/run.dir/source/vector.c.o: source/vector.c
+CMakeFiles/run.dir/source/vector.c.o: CMakeFiles/run.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/tucker/Code/software-renderer/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building C object CMakeFiles/run.dir/source/vector.c.o"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/run.dir/source/vector.c.o -MF CMakeFiles/run.dir/source/vector.c.o.d -o CMakeFiles/run.dir/source/vector.c.o -c /home/tucker/Code/software-renderer/source/vector.c
+
+CMakeFiles/run.dir/source/vector.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/run.dir/source/vector.c.i"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/tucker/Code/software-renderer/source/vector.c > CMakeFiles/run.dir/source/vector.c.i
+
+CMakeFiles/run.dir/source/vector.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/run.dir/source/vector.c.s"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/tucker/Code/software-renderer/source/vector.c -o CMakeFiles/run.dir/source/vector.c.s
+
+CMakeFiles/run.dir/source/window.c.o: CMakeFiles/run.dir/flags.make
+CMakeFiles/run.dir/source/window.c.o: source/window.c
+CMakeFiles/run.dir/source/window.c.o: CMakeFiles/run.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/tucker/Code/software-renderer/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building C object CMakeFiles/run.dir/source/window.c.o"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/run.dir/source/window.c.o -MF CMakeFiles/run.dir/source/window.c.o.d -o CMakeFiles/run.dir/source/window.c.o -c /home/tucker/Code/software-renderer/source/window.c
+
+CMakeFiles/run.dir/source/window.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/run.dir/source/window.c.i"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/tucker/Code/software-renderer/source/window.c > CMakeFiles/run.dir/source/window.c.i
+
+CMakeFiles/run.dir/source/window.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/run.dir/source/window.c.s"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/tucker/Code/software-renderer/source/window.c -o CMakeFiles/run.dir/source/window.c.s
+
 # Object files for target run
 run_OBJECTS = \
-"CMakeFiles/run.dir/source/main.c.o"
+"CMakeFiles/run.dir/source/arena.c.o" \
+"CMakeFiles/run.dir/source/color.c.o" \
+"CMakeFiles/run.dir/source/entity.c.o" \
+"CMakeFiles/run.dir/source/main.c.o" \
+"CMakeFiles/run.dir/source/sprite.c.o" \
+"CMakeFiles/run.dir/source/vector.c.o" \
+"CMakeFiles/run.dir/source/window.c.o"
 
 # External object files for target run
 run_EXTERNAL_OBJECTS =
 
+run: CMakeFiles/run.dir/source/arena.c.o
+run: CMakeFiles/run.dir/source/color.c.o
+run: CMakeFiles/run.dir/source/entity.c.o
 run: CMakeFiles/run.dir/source/main.c.o
+run: CMakeFiles/run.dir/source/sprite.c.o
+run: CMakeFiles/run.dir/source/vector.c.o
+run: CMakeFiles/run.dir/source/window.c.o
 run: CMakeFiles/run.dir/build.make
+run: dependencies/minifb/libminifb.a
 run: CMakeFiles/run.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/tucker/Code/software-renderer/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking C executable run"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/tucker/Code/software-renderer/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Linking C executable run"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/run.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
