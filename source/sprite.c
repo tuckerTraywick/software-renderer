@@ -57,7 +57,7 @@ Sprite Sprite_read_from_file(FILE *file) {
 	// Read the rows from the file starting at the last row.
 	int32_t row = 0;
 	for (row = sprite.size.y - 1; row >= 0; --row) {
-		if (fread(sprite.bitmap + row*sprite.size.y, sizeof *sprite.bitmap, sprite.size.x, file) != (size_t)sprite.size.x) {
+		if (fread(sprite.bitmap + row*(int32_t)sprite.size.y, sizeof *sprite.bitmap, sprite.size.x, file) != (size_t)sprite.size.x) {
 			free(sprite.bitmap);
 			return (Sprite){0};
 		}
@@ -83,10 +83,10 @@ bool Sprite_is_valid(Sprite *sprite) {
 }
 
 Color Sprite_get_pixel(Sprite *sprite, Vector2 position) {
-	int32_t x = sprite->size.x/2 + position.x;
-	int32_t y = sprite->size.y/2 - position.y;
-	assert(x >= 0 && y >= 0 && "Invalid coordinate.");
-	return sprite->bitmap[y*sprite->size.x + x];
+	float x = sprite->size.x*0.5 + position.x;
+	float y = sprite->size.y*0.5 - position.y;
+	assert(x >= 0.0f && y >= 0.0f && "Invalid coordinate.");
+	return sprite->bitmap[(size_t)(y*sprite->size.x + x)];
 }
 
 void Atlas_destroy(Atlas *atlas) {
@@ -102,7 +102,7 @@ Sprite Atlas_get_sprite(Atlas *atlas, uint16_t sprite_index) {
 	assert(sprite_index < atlas->sprite_count && "Sprite index out of bounds.");
 	return (Sprite){
 		.size = atlas->sprite_size,
-		.bitmap = atlas->bitmap + sprite_index*atlas->sprite_size.y*atlas->sprite_size.x,
+		.bitmap = atlas->bitmap + (size_t)(sprite_index*atlas->sprite_size.y*atlas->sprite_size.x),
 	};
 }
 

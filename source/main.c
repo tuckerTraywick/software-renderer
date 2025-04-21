@@ -35,10 +35,13 @@ int main(void) {
 
 	Viewport *viewport = Window_get_global_viewport(&window);
 	Camera camera = {0};
+	float z = 1.0;
 	do {
 		Viewport_fill(viewport, black);
+		Viewport_draw_line3(viewport, &camera, white, (Vector3){0, 0, z}, (Vector3){100, 100, z});
 		Viewport_draw_line(viewport, red, (Vector2){-400, 0}, (Vector2){400, 0});
 		Viewport_draw_line(viewport, red, (Vector2){0, -300}, (Vector2){0, 300});
+		z += 0.1f;
 	} while (Window_update(&window));
 
 	Window_destroy(&window);

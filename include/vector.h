@@ -4,14 +4,14 @@
 #include <stdint.h>
 
 typedef struct Vector2 {
-	int32_t x;
-	int32_t y;
+	float x;
+	float y;
 } Vector2;
 
 typedef struct Vector3 {
-	int32_t x;
-	int32_t y;
-	int32_t z;
+	float x;
+	float y;
+	float z;
 } Vector3;
 
 #endif // VECTOR_H

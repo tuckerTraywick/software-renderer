@@ -16,28 +16,25 @@
 #define MAX_HEIGHT 1080
 
 void Viewport_draw_pixel(Viewport *viewport, Color color, Vector2 position) {
-	int32_t x = viewport->size.x/2 + position.x;
-	int32_t y = viewport->size.y/2 - position.y;
-	viewport->frame_buffer[y*viewport->size.x + x] = color;
+	float x = viewport->size.x/2 + position.x;
+	float y = viewport->size.y/2 - position.y;
+	assert(x >= 0.0f && y >= 0.0f && "Invalid coordinate.");
+	viewport->frame_buffer[(size_t)(y*viewport->size.x + x)] = color;
 }
 
 void Viewport_draw_pixel3(Viewport *viewport, Camera *camera, Color color, Vector3 position) {
-	Vector2 screen_position = {
-		(float)(position.x - camera->position.x)/(float)(position.z - camera->position.z),
-		(float)(position.y - camera->position.y)/(float)(position.z - camera->position.z),
-	};
-	Viewport_draw_pixel(viewport, color, screen_position);
+	Viewport_draw_pixel(viewport, color, Camera_get_projection(camera, position));
 }
 
 void Viewport_draw_line(Viewport *viewport, Color color, Vector2 start, Vector2 end) {
 	// Make sure the coordinates are ordered least to greatest.
 	if (start.x > end.x) {
-		int32_t temp = start.x;
+		float temp = start.x;
 		start.x = end.x;
 		end.x = temp;
 	}
 	if (start.y > end.y) {
-		int32_t temp = start.y;
+		float temp = start.y;
 		start.y = end.y;
 		end.y = temp;
 	}
@@ -62,7 +59,9 @@ void Viewport_draw_line(Viewport *viewport, Color color, Vector2 start, Vector2 
 }
 
 void Viewport_draw_line3(Viewport *viewport, Camera *camera, Color color, Vector3 start, Vector3 end) {
-	// Vector2 screen_start = project(camera)
+	Vector2 screen_start = Camera_get_projection(camera, start);
+	Vector2 screen_end = Camera_get_projection(camera, end);
+	Viewport_draw_line(viewport, color, screen_start, screen_end);
 }
 
 void Viewport_draw_rectangle(Viewport *viewport, Color color, Vector2 position, Vector2 size) {
@@ -72,9 +71,13 @@ void Viewport_draw_rectangle(Viewport *viewport, Color color, Vector2 position, 
 	Viewport_draw_line(viewport, color, (Vector2){position.x + size.x, position.y}, (Vector2){position.x + size.x, position.y + size.y});
 }
 
+void Viewport_draw_rectangle3(Viewport *viewport, Camera *camera, Color color, Vector3 position, Vector2 size, Vector3 angle) {
+
+}
+
 void Viewport_draw_rectangle_filled(Viewport *viewport, Color color, Vector2 position, Vector2 size) {
-	for (int32_t offset_y = 0; offset_y < size.y; ++offset_y) {
-		for (int32_t offset_x = 0; offset_x < size.x; ++offset_x) {
+	for (float offset_y = 0; offset_y < size.y; ++offset_y) {
+		for (float offset_x = 0; offset_x < size.x; ++offset_x) {
 			Viewport_draw_pixel(viewport, color, (Vector2){position.x + offset_x, position.y + offset_y});
 		}
 	}
@@ -95,9 +98,9 @@ void Viewport_draw_rectangle_filled(Viewport *viewport, Color color, Vector2 pos
 // 	}
 // }
 
-// void Viewport_draw_text(Viewport *viewport, Font *font, const char *text, uint32_t color, uint16_t x, uint16_t y, float scale) {
-// 	uint32_t character_x = x;
-// 	uint32_t character_y = y;
+// void Viewport_draw_text(Viewport *viewport, Font *font, const char *text, ufloat color, uint16_t x, uint16_t y, float scale) {
+// 	ufloat character_x = x;
+// 	ufloat character_y = y;
 // 	while (*text) {
 // 		if (*text == '\n') {
 // 			character_x = x;
@@ -168,13 +171,21 @@ bool Window_update(Window *window) {
 	if (!mfb_wait_sync(window->mfb_window)) {
 		return false;
 	}
-	mfb_update_state state = mfb_update(window->mfb_window, (uint32_t*)window->global_viewport.frame_buffer);
+	mfb_update_state state = mfb_update(window->mfb_window, (float*)window->global_viewport.frame_buffer);
 	if (state != STATE_OK) {
 		return false;
 	}
 	window->global_viewport.size.x = mfb_get_window_width(window->mfb_window);
 	window->global_viewport.size.y = mfb_get_window_height(window->mfb_window);
 	return true;
+}
+
+Vector2 Camera_get_projection(Camera *camera, Vector3 point) {
+	Vector2 screen_coordinates = {
+		(point.x - camera->position.x)/(point.z - camera->position.z),
+		(point.y - camera->position.y)/(point.z - camera->position.z),
+	};
+	return screen_coordinates;
 }
 
 #undef MAX_WIDTH
