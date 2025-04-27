@@ -36,16 +36,15 @@ int main(void) {
 	Viewport *viewport = Window_get_global_viewport(&window);
 	Camera camera = {0};
 	do {
-		printf("angle = %f\n", camera.angle.x);
 		Viewport_fill(viewport, black);
 		Viewport_draw_line(viewport, red, (Vector2){-400, 0}, (Vector2){400, 0});
 		Viewport_draw_line(viewport, red, (Vector2){0, -300}, (Vector2){0, 300});
 		// Viewport_draw_sprite(viewport, &sprite, (Vector2){0, 0}, (Vector2){100, 100}, 0.0f);
 		// Viewport_draw_line(viewport, white, (Vector2){-100, -100}, (Vector2){0, 0});
-		Viewport_draw_line3(viewport, &camera, white, (Vector3){0, 0, 0}, (Vector3){100, 100, 0});
-		camera.angle.z += 0.01f;
-		if (camera.angle.z >= 2.0f*M_PI) {
-			camera.angle.z = 0.0f;
+		Viewport_draw_line3(viewport, &camera, white, (Vector3){0, 0, 100}, (Vector3){100, 100, 100});
+		camera.angle.x += 0.01f;
+		if (camera.angle.x >= 2.0f*M_PI) {
+			camera.angle.x = 0.0f;
 		}
 	} while (Window_update(&window));
 

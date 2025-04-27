@@ -170,12 +170,13 @@ bool Window_update(Window *window) {
 }
 
 Vector2 Camera_get_projection(Camera *camera, Vector3 point) {
-	// Translate and scale.
-	float z = (fabs(point.z - camera->position.z) <= 1.0f) ? 1.0f : point.z - camera->position.z;
+	// Translate.
+	float z = fabs(point.z - camera->position.z)/10.0f;
+	z = (z < 0.001f) ? 0.001f : z;
 	Vector3 screen_coordinates = {
 		(point.x - camera->position.x)/z,
 		(point.y - camera->position.y)/z,
-		z,
+		point.z - camera->position.z,
 	};
 	// Rotate around the x axis.
 	screen_coordinates = (Vector3){
@@ -193,6 +194,7 @@ Vector2 Camera_get_projection(Camera *camera, Vector3 point) {
 	screen_coordinates = (Vector3){
 		screen_coordinates.x*cosf(camera->angle.z) - screen_coordinates.y*sinf(camera->angle.z),
 		screen_coordinates.x*sinf(camera->angle.z) + screen_coordinates.y*cosf(camera->angle.z),
+		screen_coordinates.z,
 	};
 	return (Vector2){
 		screen_coordinates.x,
