@@ -14,7 +14,6 @@
 #include "entity.h"
 
 int main(void) {
-	mfb_set_target_fps(60);
 	Window window = Window_create("window", (Vector2){1920, 1080});
 	if (!Window_is_valid(&window)) {
 		fprintf(stderr, "Couldn't open window. Exiting.\n");
@@ -33,9 +32,11 @@ int main(void) {
 	// 	return 1;
 	// }
 
+	float x = 100.0f;
 	do {
 		Window_fill(&window, black);
-		Window_draw_line(&window, red, (Vector2){0, 0}, (Vector2){200, 200});
+		Window_draw_line(&window, red, (Vector2){100, 100}, (Vector2){100 + x, 100});
+		x += 10.0f;
 	} while (Window_update(&window));
 
 	Window_destroy(&window);

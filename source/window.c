@@ -15,11 +15,50 @@
 
 #define MAX_HEIGHT 1080
 
+Window Window_create(const char *name, Vector2 size) {
+	Window window = {
+		.name = name,
+		// TODO: Allow changing the size of the framebuffer.
+		// .frame_buffer = calloc(MAX_WIDTH*MAX_HEIGHT, sizeof *window.frame_buffer),
+		.frame_buffer = calloc(size.x*size.y, sizeof *window.frame_buffer),
+		.mfb_window = mfb_open_ex(name, size.x, size.y, WF_RESIZABLE),
+	};
+	if (window.mfb_window && !window.frame_buffer) {
+		mfb_close(window.mfb_window);
+	}
+	if (window.frame_buffer && !window.mfb_window) {
+		free((void*)window.frame_buffer);
+	}
+	return window;
+}
+
+bool Window_is_valid(Window *window) {
+	return window->frame_buffer && window->mfb_window;
+}
+
+void Window_destroy(Window *window) {
+	free((void*)window->frame_buffer);
+	mfb_close(window->mfb_window);
+	*window = (Window){0};
+}
+
+Vector2 Window_get_size(Window *window) {
+	return (Vector2){mfb_get_window_width(window->mfb_window), mfb_get_window_height(window->mfb_window)};
+}
+
+bool Window_update(Window *window) {
+	if (!mfb_wait_sync(window->mfb_window)) {
+		return false;
+	}
+	mfb_update_state state = mfb_update(window->mfb_window, (float*)window->frame_buffer);
+	if (state != STATE_OK) {
+		return false;
+	}
+	return true;
+}
+
 void Window_draw_pixel(Window *window, Color color, Vector2 position) {
-	// float x = roundf(Window_get_size(window).x*0.5f + position.x);
-	// float y = roundf(Window_get_size(window).y*0.5f - position.y);
-	// assert(x >= 0.0f && y >= 0.0f && "Invalid coordinate.");
-	window->frame_buffer[(size_t)(position.y*Window_get_size(window).x + position.x)] = color;
+	window->frame_buffer[(size_t)position.y*(size_t)Window_get_size(window).x + (size_t)position.x] = color;
 }
 
 // void Window_draw_pixel3(Window *window, Camera *camera, Color color, Vector3 position) {
@@ -34,12 +73,14 @@ void Window_draw_line(Window *window, Color color, Vector2 start, Vector2 end) {
 	// Draw the line using the DDA algorithm.
 	if (fabs(delta_x) >= fabs(delta_y)) {
 		while (fabs(x - end.x) > 1.0f) {
+			printf("plotting (%f, %f)\n", x, y);
 			Window_draw_pixel(window, color, (Vector2){x, y});
 			x += (delta_x >= 0.0f) ? 1.0f : -1.0f;
 			y += delta_y/fabs(delta_x);
 		}
 	} else {
 		while (fabs(y - end.y) > 1.0f) {
+			printf("plotting (%f, %f)\n", x, y);
 			Window_draw_pixel(window, color, (Vector2){x, y});
 			x += delta_x/fabs(delta_y);
 			y += (delta_y >= 0.0f) ? 1.0f : -1.0f;
@@ -64,7 +105,7 @@ void Window_draw_rectangle(Window *window, Color color, Vector2 position, Vector
 
 // }
 
-void Window_draw_rectangle_filled(Window *window, Color color, Vector2 position, Vector2 size) {
+void Window_draw_filled_rectangle(Window *window, Color color, Vector2 position, Vector2 size) {
 	for (float offset_y = 0; offset_y < size.y; ++offset_y) {
 		for (float offset_x = 0; offset_x < size.x; ++offset_x) {
 			Window_draw_pixel(window, color, (Vector2){position.x + offset_x, position.y + offset_y});
@@ -116,48 +157,6 @@ void Window_fill(Window *window, Color color) {
 	for (size_t i = 0; i < Window_get_size(window).x*Window_get_size(window).y; ++i) {
 		window->frame_buffer[i] = color;
 	}
-}
-
-Window Window_create(const char *name, Vector2 size) {
-	Window window = {
-		.name = name,
-		// TODO: Allow changing the size of the framebuffer.
-		// .frame_buffer = calloc(MAX_WIDTH*MAX_HEIGHT, sizeof *window.frame_buffer),
-		.frame_buffer = calloc(size.x*size.y, sizeof *window.frame_buffer),
-		.mfb_window = mfb_open_ex(name, size.x, size.y, WF_RESIZABLE),
-	};
-	if (window.mfb_window && !window.frame_buffer) {
-		mfb_close(window.mfb_window);
-	}
-	if (window.frame_buffer && !window.mfb_window) {
-		free((void*)window.frame_buffer);
-	}
-	return window;
-}
-
-bool Window_is_valid(Window *window) {
-	return window->frame_buffer && window->mfb_window;
-}
-
-void Window_destroy(Window *window) {
-	free((void*)window->frame_buffer);
-	mfb_close(window->mfb_window);
-	*window = (Window){0};
-}
-
-Vector2 Window_get_size(Window *window) {
-	return (Vector2){mfb_get_window_width(window->mfb_window), mfb_get_window_height(window->mfb_window)};
-}
-
-bool Window_update(Window *window) {
-	if (!mfb_wait_sync(window->mfb_window)) {
-		return false;
-	}
-	mfb_update_state state = mfb_update(window->mfb_window, (float*)window->frame_buffer);
-	if (state != STATE_OK) {
-		return false;
-	}
-	return true;
 }
 
 // Vector2 Camera_get_projection(Camera *camera, Vector3 point) {
