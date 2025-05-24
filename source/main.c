@@ -33,21 +33,37 @@ int main(void) {
 		return 1;
 	}
 
-	Viewport *viewport = Window_get_global_viewport(&window);
-	Camera camera = {0};
 	do {
-		Viewport_fill(viewport, black);
-		Viewport_draw_line(viewport, red, (Vector2){-400, 0}, (Vector2){400, 0});
-		Viewport_draw_line(viewport, red, (Vector2){0, -300}, (Vector2){0, 300});
-		// Viewport_draw_sprite(viewport, &sprite, (Vector2){0, 0}, (Vector2){100, 100}, 0.0f);
-		// Viewport_draw_line(viewport, white, (Vector2){-100, -100}, (Vector2){0, 0});
-		Viewport_draw_line3(viewport, &camera, white, (Vector3){0, 0, 100}, (Vector3){100, 100, 100});
-		camera.angle.x += 0.01f;
-		if (camera.angle.x >= 2.0f*M_PI) {
-			camera.angle.x = 0.0f;
-		}
+		
 	} while (Window_update(&window));
 
 	Window_destroy(&window);
 	return 0;
 }
+
+// int main(void) {
+// 	mfb_set_target_fps(60);
+// 	Window window = Window_create("window", (Vector2){1920, 1080});
+// 	if (!Window_is_valid(&window)) {
+// 		fprintf(stderr, "Couldn't open window. Exiting.\n");
+// 		return 1;
+// 	}
+
+// 	bool pressed = false;
+// 	float value = 0;
+// 	do {
+// 		Window_fill(&window, black);
+// 		Window_begin_subwindow(&window, 123, 456, 400, 200);
+// 			Window_begin_row(&window, CENTER);
+// 				Window_draw_label(&window, "hi");
+// 				if (Window_draw_button(&window, &pressed)) {
+// 					do_something();
+// 				}
+// 				Window_draw_slider(&window, &value)
+// 			Window_end_row(&window);
+// 		Window_end_subwindow(&window);
+// 	} while (Window_update(&window));
+
+// 	Window_destroy(&window);
+// 	return 0;
+// }
