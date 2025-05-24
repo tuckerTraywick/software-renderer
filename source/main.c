@@ -34,7 +34,8 @@ int main(void) {
 	// }
 
 	do {
-		Window_fill(&window, red);
+		Window_fill(&window, black);
+		Window_draw_line(&window, red, (Vector2){0, 0}, (Vector2){200, 200});
 	} while (Window_update(&window));
 
 	Window_destroy(&window);

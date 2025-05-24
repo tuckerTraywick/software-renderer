@@ -16,10 +16,10 @@
 #define MAX_HEIGHT 1080
 
 void Window_draw_pixel(Window *window, Color color, Vector2 position) {
-	float x = roundf(Window_get_size(window).x*0.5f + position.x);
-	float y = roundf(Window_get_size(window).y*0.5f - position.y);
-	assert(x >= 0.0f && y >= 0.0f && "Invalid coordinate.");
-	window->frame_buffer[(size_t)(y*Window_get_size(window).x + x)] = color;
+	// float x = roundf(Window_get_size(window).x*0.5f + position.x);
+	// float y = roundf(Window_get_size(window).y*0.5f - position.y);
+	// assert(x >= 0.0f && y >= 0.0f && "Invalid coordinate.");
+	window->frame_buffer[(size_t)(position.y*Window_get_size(window).x + position.x)] = color;
 }
 
 // void Window_draw_pixel3(Window *window, Camera *camera, Color color, Vector3 position) {
