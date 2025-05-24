@@ -15,79 +15,79 @@
 
 #define MAX_HEIGHT 1080
 
-// void Viewport_draw_pixel(Viewport *viewport, Color color, Vector2 position) {
-// 	float x = roundf(viewport->size.x*0.5f + position.x);
-// 	float y = roundf(viewport->size.y*0.5f - position.y);
-// 	assert(x >= 0.0f && y >= 0.0f && "Invalid coordinate.");
-// 	viewport->frame_buffer[(size_t)(y*viewport->size.x + x)] = color;
+void Window_draw_pixel(Window *window, Color color, Vector2 position) {
+	float x = roundf(Window_get_size(window).x*0.5f + position.x);
+	float y = roundf(Window_get_size(window).y*0.5f - position.y);
+	assert(x >= 0.0f && y >= 0.0f && "Invalid coordinate.");
+	window->frame_buffer[(size_t)(y*Window_get_size(window).x + x)] = color;
+}
+
+// void Window_draw_pixel3(Window *window, Camera *camera, Color color, Vector3 position) {
+// 	Window_draw_pixel(window, color, Camera_get_projection(camera, position));
 // }
 
-// void Viewport_draw_pixel3(Viewport *viewport, Camera *camera, Color color, Vector3 position) {
-// 	Viewport_draw_pixel(viewport, color, Camera_get_projection(camera, position));
-// }
+void Window_draw_line(Window *window, Color color, Vector2 start, Vector2 end) {
+	const float delta_x = end.x - start.x;
+	const float delta_y = end.y - start.y;
+	float x = start.x;
+	float y = start.y;
+	// Draw the line using the DDA algorithm.
+	if (fabs(delta_x) >= fabs(delta_y)) {
+		while (fabs(x - end.x) > 1.0f) {
+			Window_draw_pixel(window, color, (Vector2){x, y});
+			x += (delta_x >= 0.0f) ? 1.0f : -1.0f;
+			y += delta_y/fabs(delta_x);
+		}
+	} else {
+		while (fabs(y - end.y) > 1.0f) {
+			Window_draw_pixel(window, color, (Vector2){x, y});
+			x += delta_x/fabs(delta_y);
+			y += (delta_y >= 0.0f) ? 1.0f : -1.0f;
+		}
+	}
+}
 
-// void Viewport_draw_line(Viewport *viewport, Color color, Vector2 start, Vector2 end) {
-// 	const float delta_x = end.x - start.x;
-// 	const float delta_y = end.y - start.y;
-// 	float x = start.x;
-// 	float y = start.y;
-// 	// Draw the line using the DDA algorithm.
-// 	if (fabs(delta_x) >= fabs(delta_y)) {
-// 		while (fabs(x - end.x) > 1.0f) {
-// 			Viewport_draw_pixel(viewport, color, (Vector2){x, y});
-// 			x += (delta_x >= 0.0f) ? 1.0f : -1.0f;
-// 			y += delta_y/fabs(delta_x);
-// 		}
-// 	} else {
-// 		while (fabs(y - end.y) > 1.0f) {
-// 			Viewport_draw_pixel(viewport, color, (Vector2){x, y});
-// 			x += delta_x/fabs(delta_y);
-// 			y += (delta_y >= 0.0f) ? 1.0f : -1.0f;
-// 		}
-// 	}
-// }
-
-// void Viewport_draw_line3(Viewport *viewport, Camera *camera, Color color, Vector3 start, Vector3 end) {
+// void Window_draw_line3(Window *window, Camera *camera, Color color, Vector3 start, Vector3 end) {
 // 	Vector2 screen_start = Camera_get_projection(camera, start);
 // 	Vector2 screen_end = Camera_get_projection(camera, end);
-// 	Viewport_draw_line(viewport, color, screen_start, screen_end);
+// 	Window_draw_line(window, color, screen_start, screen_end);
 // }
 
-// void Viewport_draw_rectangle(Viewport *viewport, Color color, Vector2 position, Vector2 size) {
-// 	Viewport_draw_line(viewport, color, position, (Vector2){position.x + size.x, position.y});
-// 	Viewport_draw_line(viewport, color, (Vector2){position.x, position.y + size.y}, (Vector2){position.x + size.x, position.y + size.y});
-// 	Viewport_draw_line(viewport, color, position, (Vector2){position.x, position.y + size.y});
-// 	Viewport_draw_line(viewport, color, (Vector2){position.x + size.x, position.y}, (Vector2){position.x + size.x, position.y + size.y});
+void Window_draw_rectangle(Window *window, Color color, Vector2 position, Vector2 size) {
+	Window_draw_line(window, color, position, (Vector2){position.x + size.x, position.y});
+	Window_draw_line(window, color, (Vector2){position.x, position.y + size.y}, (Vector2){position.x + size.x, position.y + size.y});
+	Window_draw_line(window, color, position, (Vector2){position.x, position.y + size.y});
+	Window_draw_line(window, color, (Vector2){position.x + size.x, position.y}, (Vector2){position.x + size.x, position.y + size.y});
+}
+
+// void Window_draw_rectangle3(Window *window, Camera *camera, Color color, Vector3 position, Vector2 size, Vector3 angle) {
+
 // }
 
-// void Viewport_draw_rectangle3(Viewport *viewport, Camera *camera, Color color, Vector3 position, Vector2 size, Vector3 angle) {
+void Window_draw_rectangle_filled(Window *window, Color color, Vector2 position, Vector2 size) {
+	for (float offset_y = 0; offset_y < size.y; ++offset_y) {
+		for (float offset_x = 0; offset_x < size.x; ++offset_x) {
+			Window_draw_pixel(window, color, (Vector2){position.x + offset_x, position.y + offset_y});
+		}
+	}
+}
 
-// }
+void Window_draw_sprite(Window *window, Sprite *sprite, Vector2 position, Vector2 size, float angle) {
+	float scale_x = (float)size.x/(float)sprite->size.x;
+	float scale_y = (float)size.y/(float)sprite->size.y;
+	for (float offset_y = -size.y*0.5f; offset_y < size.y*0.5f; offset_y += 1.0f) {
+		for (float offset_x = -size.x*0.5f; offset_x < size.x*0.5f; offset_x += 1.0f) {
+			// Use nearest-neighbor scaling to render the bitmap.
+			Vector2 sprite_position = (Vector2){
+				offset_x/scale_x,
+				offset_y/scale_y,
+			};
+			Window_draw_pixel(window, Sprite_get_pixel(sprite, sprite_position), (Vector2){position.x + offset_x, position.y + offset_y});
+		}
+	}
+}
 
-// void Viewport_draw_rectangle_filled(Viewport *viewport, Color color, Vector2 position, Vector2 size) {
-// 	for (float offset_y = 0; offset_y < size.y; ++offset_y) {
-// 		for (float offset_x = 0; offset_x < size.x; ++offset_x) {
-// 			Viewport_draw_pixel(viewport, color, (Vector2){position.x + offset_x, position.y + offset_y});
-// 		}
-// 	}
-// }
-
-// void Viewport_draw_sprite(Viewport *viewport, Sprite *sprite, Vector2 position, Vector2 size, float angle) {
-// 	float scale_x = (float)size.x/(float)sprite->size.x;
-// 	float scale_y = (float)size.y/(float)sprite->size.y;
-// 	for (float offset_y = -size.y*0.5f; offset_y < size.y*0.5f; offset_y += 1.0f) {
-// 		for (float offset_x = -size.x*0.5f; offset_x < size.x*0.5f; offset_x += 1.0f) {
-// 			// Use nearest-neighbor scaling to render the bitmap.
-// 			Vector2 sprite_position = (Vector2){
-// 				offset_x/scale_x,
-// 				offset_y/scale_y,
-// 			};
-// 			Viewport_draw_pixel(viewport, Sprite_get_pixel(sprite, sprite_position), (Vector2){position.x + offset_x, position.y + offset_y});
-// 		}
-// 	}
-// }
-
-// void Viewport_draw_text(Viewport *viewport, Font *font, const char *text, ufloat color, uint16_t x, uint16_t y, float scale) {
+// void Window_draw_text(Window *window, Font *font, const char *text, ufloat color, uint16_t x, uint16_t y, float scale) {
 // 	ufloat character_x = x;
 // 	ufloat character_y = y;
 // 	while (*text) {
@@ -106,17 +106,17 @@
 // 		// TODO: Figure out a way to color fonts without copying every character every time. Maybe make multiple colors of the same font atlas?
 // 		Sprite_copy(&ch, &colored_ch);
 // 		Sprite_apply_color(&colored_ch, color);
-// 		Viewport_draw_sprite(viewport, &colored_ch, character_x, character_y, scale);
+// 		Window_draw_sprite(window, &colored_ch, character_x, character_y, scale);
 // 		character_x += (FONT_SPRITE_WIDTH + FONT_PADDING)*scale;
 // 		++text;
 // 	}
 // }
 
-// void Viewport_fill(Viewport *viewport, Color color) {
-// 	for (size_t i = 0; i < viewport->size.x*viewport->size.y; ++i) {
-// 		viewport->frame_buffer[i] = color;
-// 	}
-// }
+void Window_fill(Window *window, Color color) {
+	for (size_t i = 0; i < Window_get_size(window).x*Window_get_size(window).y; ++i) {
+		window->frame_buffer[i] = color;
+	}
+}
 
 Window Window_create(const char *name, Vector2 size) {
 	Window window = {
@@ -148,10 +148,6 @@ void Window_destroy(Window *window) {
 Vector2 Window_get_size(Window *window) {
 	return (Vector2){mfb_get_window_width(window->mfb_window), mfb_get_window_height(window->mfb_window)};
 }
-
-// Viewport *Window_get_global_viewport(Window *window) {
-// 	return &window->global_viewport;
-// }
 
 bool Window_update(Window *window) {
 	if (!mfb_wait_sync(window->mfb_window)) {

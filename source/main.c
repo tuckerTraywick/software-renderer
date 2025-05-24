@@ -26,15 +26,15 @@ int main(void) {
 	// 	Window_destroy(&window);
 	// 	return 1;
 	// }
-	Sprite sprite = Sprite_read_from_path("mario.bmp");
-	if (!Sprite_is_valid(&sprite)) {
-		fprintf(stderr, "Couldn't read sprite. Exiting.\n");
-		Window_destroy(&window);
-		return 1;
-	}
+	// Sprite sprite = Sprite_read_from_path("mario.bmp");
+	// if (!Sprite_is_valid(&sprite)) {
+	// 	fprintf(stderr, "Couldn't read sprite. Exiting.\n");
+	// 	Window_destroy(&window);
+	// 	return 1;
+	// }
 
 	do {
-		
+		Window_fill(&window, red);
 	} while (Window_update(&window));
 
 	Window_destroy(&window);

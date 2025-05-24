@@ -7,50 +7,43 @@
 #include "color.h"
 #include "sprite.h"
 
-// typedef struct Viewport {
-// 	Vector2 position;
-// 	Vector2 size;
-// 	Color *frame_buffer;
-// } Viewport;
-
 typedef struct Window {
 	const char *name;
-	// Viewport global_viewport;
 	Color *frame_buffer;
 	struct mfb_window *mfb_window;
 } Window;
 
-// typedef struct Camera {
-// 	Vector3 position;
-// 	Vector3 angle;
-// 	Vector2 fov;
-// } Camera;
+typedef struct Camera {
+	Vector3 position;
+	Vector3 angle;
+	Vector2 fov;
+} Camera;
 
-// void Viewport_draw_pixel(Viewport *viewport, Color color, Vector2 position);
+void Window_draw_pixel(Window *window, Color color, Vector2 position);
 
-// void Viewport_draw_pixel3(Viewport *viewport, Camera *camera, Color color, Vector3 position);
+void Window_draw_pixel3(Window *window, Camera *camera, Color color, Vector3 position);
 
-// void Viewport_draw_line(Viewport *viewport, Color color, Vector2 start, Vector2 end);
+void Window_draw_line(Window *window, Color color, Vector2 start, Vector2 end);
 
-// void Viewport_draw_line3(Viewport *viewport, Camera *camera, Color color, Vector3 start, Vector3 end);
+void Window_draw_line3(Window *window, Camera *camera, Color color, Vector3 start, Vector3 end);
 
-// void Viewport_draw_rectangle(Viewport *viewport, Color color, Vector2 position, Vector2 size);
+void Window_draw_rectangle(Window *window, Color color, Vector2 position, Vector2 size);
 
-// void Viewport_draw_rectangle3(Viewport *viewport, Camera *camera, Color color, Vector3 position, Vector2 size, Vector3 angle);
+void Window_draw_rectangle3(Window *window, Camera *camera, Color color, Vector3 position, Vector2 size, Vector3 angle);
 
-// void Viewport_draw_rectangle_filled(Viewport *viewport, Color color, Vector2 position, Vector2 size);
+void Window_draw_rectangle_filled(Window *window, Color color, Vector2 position, Vector2 size);
 
-// void Viewport_draw_rectangle_filled3(Viewport *viewport, Camera *camera, Color color, Vector3 position, Vector3 size, Vector3 angle);
+void Window_draw_rectangle_filled3(Window *window, Camera *camera, Color color, Vector3 position, Vector3 size, Vector3 angle);
 
-// void Viewport_draw_sprite(Viewport *viewport, Sprite *sprite, Vector2 position, Vector2 size, float angle);
+void Window_draw_sprite(Window *window, Sprite *sprite, Vector2 position, Vector2 size, float angle);
 
-// void Viewport_draw_sprite3(Viewport *viewport, Camera *camera, Sprite *sprite, Vector3 position, Vector3 size, Vector3 angle);
+void Window_draw_sprite3(Window *window, Camera *camera, Sprite *sprite, Vector3 position, Vector3 size, Vector3 angle);
 
-// void Viewport_draw_text(Viewport *viewport, Font *font, uint16_t font_size, Color color, const char *text, Vector2 position, float angle);
+void Window_draw_text(Window *window, Font *font, uint16_t font_size, Color color, const char *text, Vector2 position, float angle);
 
-// void Viewport_draw_text3(Viewport *viewport, Camera *camera, Font *font, uint16_t font_size, Color color, const char *text, Vector3 position, Vector3 angle);
+void Window_draw_text3(Window *window, Camera *camera, Font *font, uint16_t font_size, Color color, const char *text, Vector3 position, Vector3 angle);
 
-// void Viewport_fill(Viewport *viewport, Color color);
+void Window_fill(Window *window, Color color);
 
 Window Window_create(const char *name, Vector2 size);
 
@@ -59,8 +52,6 @@ bool Window_is_valid(Window *window);
 void Window_destroy(Window *window);
 
 Vector2 Window_get_size(Window *window);
-
-// Viewport *Window_get_global_viewport(Window *window);
 
 bool Window_update(Window *window);
 
